@@ -1,0 +1,29 @@
+{
+  "name": "redraft",
+  "version": "0.1.0",
+  "description": "Renders the result of Draft.js convertToRaw using provided callbacks, works well with React",
+  "main": "./lib/index.js",
+  "scripts": {
+    "compile": "babel src --out-dir lib",
+    "lint": "eslint src",
+    "mocha": "mocha --compilers js:babel-core/register",
+    "test": "npm run lint && npm run mocha"
+  },
+  "keywords": [
+    "draft-js"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.6.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.6.5",
+    "babel-core": "^6.7.2",
+    "babel-preset-es2015": "^6.6.0",
+    "chai": "^3.5.0",
+    "eslint": "^2.4.0",
+    "eslint-config-airbnb": "^6.1.0",
+    "mocha": "^2.4.5"
+  }
+}
