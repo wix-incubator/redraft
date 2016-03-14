@@ -6,8 +6,13 @@
   "scripts": {
     "compile": "babel src --out-dir lib",
     "lint": "eslint src",
+    "prepublish": "npm run compile && npm test",
     "mocha": "mocha --compilers js:babel-core/register",
     "test": "npm run lint && npm run mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lokiuz/redraft.git"
   },
   "keywords": [
     "draft-js"
