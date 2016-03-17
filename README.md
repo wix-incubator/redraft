@@ -124,7 +124,7 @@ Returns an rendered single block.
 
 ## What's missing / TODO
 - Support for 'ordered-list-item' and 'unordered-list-item' with depth
-- Consider dropping the lodash dependency
+- Change how render callbacks are passed
 
 ## Credits
 - [backdraft-js](https://github.com/evanc/backdraft-js) - For providing a general method of parsing raw state

@@ -45,9 +45,9 @@ export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
 /**
  * Renders blocks grouped by type using provided blockStyleRenderers
  */
-const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {}, entityRenderers = {}, entityMap = []) => {
+const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
+                      entityRenderers = {}, entityMap = {}) => {
   // initialize
-
   const rendered = [];
   let group = [];
   let prevType = null;
