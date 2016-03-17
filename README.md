@@ -117,7 +117,9 @@ Returns an rendered single block.
 - node - ContentNode from `RawParser.parse(block)` method
 - inlineRendrers, entityRenderers - callback objects
 - entityMap - the entityMap from raw state `raw.entityMap`
+
 ## Changelog
+
 ### 0.2.0
 - Added basic entity parsing and the ContentNode class
 - Minor fixes
