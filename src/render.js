@@ -17,7 +17,7 @@ const pushString = (string, array, index) => {
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
-export const renderNode = (node, styleRendrers) => {
+export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
   let children = [];
   let index = 0;
   node.content.forEach((part) => {
@@ -25,12 +25,18 @@ export const renderNode = (node, styleRendrers) => {
       children = pushString(part, children, index);
     } else {
       index++;
-      children[index] = renderNode(part, styleRendrers);
+      children[index] = renderNode(part, styleRendrers, entityRenderers, entityMap);
       index++;
     }
   });
-  if (styleRendrers[node.style]) {
+  if (node.style && styleRendrers[node.style]) {
     return styleRendrers[node.style](children);
+  }
+  if (node.entity !== null) {
+    const entity = entityMap[node.entity];
+    if (entity && entityRenderers[entity.type]) {
+      return entityRenderers[entity.type](children, entity.data);
+    }
   }
   return children;
 };
@@ -39,14 +45,16 @@ export const renderNode = (node, styleRendrers) => {
 /**
  * Renders blocks grouped by type using provided blockStyleRenderers
  */
-const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {}) => {
+const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {}, entityRenderers = {}, entityMap = []) => {
   // initialize
+
   const rendered = [];
   let group = [];
   let prevType = null;
+  const Parser = new RawParser;
   blocks.forEach((block) => {
-    const node = new RawParser(block).parse();
-    const renderedNode = renderNode(node, inlineRendrers);
+    const node = Parser.parse(block);
+    const renderedNode = renderNode(node, inlineRendrers, entityRenderers, entityMap);
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
@@ -73,10 +81,10 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {}) => {
 /**
  * Converts and renders each block of Draft.js rawState
  */
-export const renderRaw = (raw, inlineRendrers = {}, blockRenderers = {}) => {
+export const renderRaw = (raw, inlineRendrers = {}, blockRenderers = {}, entityRenderers = {}) => {
   const blocks = raw.blocks;
   if (!blocks || blocks[0].text.length === 0) {
     return null;
   }
-  return renderBlocks(blocks, inlineRendrers, blockRenderers);
+  return renderBlocks(blocks, inlineRendrers, blockRenderers, entityRenderers, raw.entityMap);
 };

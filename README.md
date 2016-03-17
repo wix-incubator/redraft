@@ -48,7 +48,7 @@ const inlineRenderers = {
 const addBreaklines = (children) => children.map(child => [child, <br />]);
 
 /**
- * Note that block callbacks receive an array of blocks with same styling
+ * Note that children are an array of blocks with same styling
  */
 const blockRenderers = {
   unstyled: (children) => children.map(child => <p>{child}</p>),
@@ -58,6 +58,13 @@ const blockRenderers = {
   'code-block': (children) => <pre style={styles.codeBlock}>{addBreaklines(children)}</pre>,
   'unordered-list-item': (children) => <ul>{children.map(child => <li>{child}</li>)}</ul>,
   'ordered-list-item': (children) => <ol>{children.map(child => <li>{child}</li>)}</ol>,
+};
+
+/**
+ * For entities what gets passed is children and the entity data
+ */
+const entityRenderers = {
+  LINK: (children, data) => <a href={data.url}>{children}</a>,
 };
 
 export default class Renderer extends Component {
@@ -75,7 +82,7 @@ export default class Renderer extends Component {
     if (!raw) {
       return this.renderWarning();
     }
-    const rendered = renderRaw(raw, inlineRenderers, blockRenderers);
+    const rendered = renderRaw(raw, inlineRenderers, blockRenderers, entityRenderers);
     // renderRaw returns a null if there's nothing to render
     if (!rendered) {
       return this.renderWarning();
@@ -90,29 +97,35 @@ export default class Renderer extends Component {
 ```
 
 ## API
-### `renderRaw(Object:raw, Object:inlineRendrers, Object:blockRenderers)`
+```js
+renderRaw(Object:raw, Object:inlineRendrers, Object:blockRenderers)
+```
 Returns an array of rendered blocks.
 - raw - result of the Draft.js convertToRaw
 - inlineRendrers - object of key => callback pairs, where key is a Draft.js style and callback accepts an array of children
-- inlineRendrers - similar to inlineRendrers - here each child is a block with same style - see the example for a use case
+- blockRenderers - similar to inlineRendrers - here each child is a block with same style - see the example for a use case
 
-### `new RawPraser(Object: block)`
-Initialize a new raw parser with a single block
-- block - single element of Drafts raw.blocks
+```js
+RawParser.parse(block)
+```
+Parses the provided block and returns an ContentNode object
 
-### `RawPraser.parse()`
-Parses the provided block and returns an nested node object
-
-### `renderNode(Object:node, Object:inlineRendrers)`
+```js
+renderNode(Object:node, Object:inlineRendrers, Object:entityRenderers, Object:entityMap)
+```
 Returns an rendered single block.
-- node - result of the RawPraser.parse()
-
+- node - ContentNode from `RawParser.parse(block)` method
+- inlineRendrers, entityRenderers - callback objects
+- entityMap - the entityMap from raw state `raw.entityMap`
+## Changelog
+### 0.2.0
+- Added basic entity parsing and the ContentNode class
+- Minor fixes
 
 ## What's missing / TODO
-- Entities
 - Support for 'ordered-list-item' and 'unordered-list-item' with depth
-- Consider dropping the lodash dependecy
+- Consider dropping the lodash dependency
 
 ## Credits
-- [backdraft-js](https://github.com/evanc/backdraft-js)
-- [Draft.js](https://facebook.github.io/draft-js)
+- [backdraft-js](https://github.com/evanc/backdraft-js) - For providing a general method of parsing raw state
+- [Draft.js](https://facebook.github.io/draft-js) - Well for Draft
