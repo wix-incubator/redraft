@@ -119,17 +119,8 @@ Returns an rendered single block.
 - entityMap - the entityMap from raw state `raw.entityMap`
 
 ## Changelog
+The changelog is avalible here [CHANGELOG](CHANGELOG.md)
 
-### 0.2.1
-- few less iterations of RawParser
-- strings are concatenated inside ContentNode
-### 0.2.0
-- Added basic entity parsing and the ContentNode class
-- Minor fixes
-
-## What's missing / TODO
-- Support for 'ordered-list-item' and 'unordered-list-item' with depth
-- Change how render callbacks are passed
 
 ## Credits
 - [backdraft-js](https://github.com/evanc/backdraft-js) - For providing a general method of parsing raw state
