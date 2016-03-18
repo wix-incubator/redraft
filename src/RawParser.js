@@ -37,15 +37,12 @@ export default class RawParser {
     ranges.forEach((range) => {
       indexes.push(range.offset);
       indexes.push(range.offset + range.length);
-      // also add neighbouring chars as relevant
-      indexes.push(range.offset - 1);
+      // also add some neighbouring chars as relevant
       indexes.push(range.offset + 1);
       indexes.push(range.offset + range.length - 1);
-      indexes.push(range.offset + range.length + 1);
     });
     return indexes;
   }
-
 
   /**
    * Iterates over relevant text indexes and calls itself to create nested nodes
@@ -55,9 +52,6 @@ export default class RawParser {
     for (this.iterator; this.relevantIndexes[this.iterator] < endOffset; this.iterator++) {
       const index = this.relevantIndexes[this.iterator];
 
-      if (index < 0 || index > (this.text.length - 1)) {
-        continue;
-      }
       // figure out what styles this char and the next char need
       // (regardless of whether there *is* a next char or not)
       const characterStyles = this.relevantStyles(index);

@@ -21,7 +21,7 @@ export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
   let children = [];
   let index = 0;
   node.content.forEach((part) => {
-    if (typeof part === 'string' || part instanceof String) {
+    if (typeof part === 'string') {
       children = pushString(part, children, index);
     } else {
       index++;
