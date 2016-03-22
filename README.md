@@ -98,12 +98,13 @@ export default class Renderer extends Component {
 
 ## API
 ```js
-renderRaw(Object:raw, Object:inlineRendrers, Object:blockRenderers)
+renderRaw(Object:raw, Object:inlineRendrers, Object:blockRenderers, Object:entityRenderers)
 ```
 Returns an array of rendered blocks.
 - raw - result of the Draft.js convertToRaw
 - inlineRendrers - object of key => callback pairs, where key is a Draft.js style and callback accepts an array of children
 - blockRenderers - similar to inlineRendrers - here each child is a block with same style - see the example for a use case
+- entityRenderers - for rendering entities those have two arguments children and data
 
 ```js
 RawParser.parse(block)

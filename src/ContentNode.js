@@ -2,7 +2,8 @@ export class ContentNode {
 
   constructor(props) {
     this.content = props.content || [];
-    this.endOffset = typeof props.endOffset !== 'undefined' ? props.endOffset : null;
+    this.start = typeof props.start !== 'undefined' ? props.start : null;
+    this.end = typeof props.end !== 'undefined' ? props.end : null;
     this.entity = typeof props.entity !== 'undefined' ? props.entity : null;
     this.style = props.style || null;
   }
@@ -15,14 +16,28 @@ export class ContentNode {
     this.content[this.content.length - 1] = this.content[this.content.length - 1] + string;
   }
 
-  pushContent(item) {
+  pushContent(string, stack = []) {
     // we can just concat strings in case when both the pushed item
     // and the last element of the content array is a string
-    if (typeof item === 'string' && typeof this.getCurrentContent() === 'string') {
-      this.addToCurrentContent(item);
-    } else {
-      this.content.push(item);
+    // log
+    if (!stack || stack.length < 1) {
+      if (typeof string === 'string' && typeof this.getCurrentContent() === 'string') {
+        this.addToCurrentContent(string);
+      } else {
+        this.content.push(string);
+      }
+      return this;
     }
+    const [head, ...rest] = stack;
+    const current = this.getCurrentContent();
+    if (current instanceof ContentNode && current.style === head) {
+      current.pushContent(string, rest);
+    } else {
+      const newNode = new ContentNode({ style: head });
+      newNode.pushContent(string, rest);
+      this.content.push(newNode);
+    }
+    return this;
   }
 
 }

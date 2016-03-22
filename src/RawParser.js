@@ -37,64 +37,37 @@ export default class RawParser {
     ranges.forEach((range) => {
       indexes.push(range.offset);
       indexes.push(range.offset + range.length);
-      // also add some neighbouring chars as relevant
-      indexes.push(range.offset + 1);
-      indexes.push(range.offset + range.length - 1);
     });
     return indexes;
   }
 
   /**
-   * Iterates over relevant text indexes and calls itself to create nested nodes
+   * Loops over relevant text indexes
    */
-  nodeIterator(node, endOffset) {
+  nodeIterator(node, start, end) {
+    const indexes = this.relevantIndexes.slice(
+      this.relevantIndexes.indexOf(start),
+      this.relevantIndexes.indexOf(end)
+    );
     // loops while next index is smaller than the endOffset
-    for (this.iterator; this.relevantIndexes[this.iterator] < endOffset; this.iterator++) {
-      const index = this.relevantIndexes[this.iterator];
-
+    indexes.forEach((index, key) => {
       // figure out what styles this char and the next char need
       // (regardless of whether there *is* a next char or not)
       const characterStyles = this.relevantStyles(index);
-      const nextCharacterStyles = this.relevantStyles(index + 1);
 
-      // calculate styles to add and remove
-      const stylesToAdd = difference(characterStyles, this.styleStack);
-      this.stylesToRemove = difference(characterStyles, nextCharacterStyles);
+      // calculate distance or set it to 1 if thers no next index
+      const distance = indexes[key + 1]
+                       ? indexes[key + 1] - index
+                       : 1;
+      // add all the chars up to next relevantIndex
+      const text = this.text.substr(index, distance);
+      node.pushContent(text, characterStyles);
 
-      if (stylesToAdd[0]) {
-        this.styleStack.push(stylesToAdd[0]);
-        // create a nested node if theres a style to add
-        node.pushContent(
-          this.nodeIterator(new ContentNode({ style: stylesToAdd[0] }), endOffset)
-        );
-        this.styleStack.pop();
-        // close the node if there are styles to remove
-        if (this.containsSome(this.styleStack, this.stylesToRemove)) {
-          return node;
-        }
-        // Check if additional escape condition is met
-        if (this.relevantIndexes[this.iterator + 1] > endOffset) {
-          return node;
-        }
-        // move on to next character
-        continue;
+      // if thers no next index and thers more text left to push
+      if (!indexes[key + 1] && index < end) {
+        node.pushContent(this.text.substring(index + 1, end), this.relevantStyles(end - 1));
       }
-      // push self
-      node.pushContent(this.text.substr(index, 1));
-      // close the node if there are styles to remove
-      if (this.containsSome(this.styleStack, this.stylesToRemove)) {
-        return node;
-      }
-      // calculate distance or set it to 0 if thers no next relevantIndex
-      const distance = this.relevantIndexes[this.iterator + 1]
-                       ? this.relevantIndexes[this.iterator + 1] - index
-                       : 0;
-      // we check if there are any chars between current and the next one
-      if (distance > 1) {
-        // add all the chars up to next relevantIndex
-        node.pushContent(this.text.substr(index + 1, distance - 1));
-      }
-    }
+    });
     return node;
   }
 
@@ -106,19 +79,20 @@ export default class RawParser {
     const nodes = [];
     // if thers no entities will return just a single item
     if (entityRanges.length < 1) {
-      nodes.push(new ContentNode({ endOffset: text.length }));
+      nodes.push(new ContentNode({ start: 0, end: text.length }));
       return nodes;
     }
 
     entityRanges.forEach(range => {
       // create an empty node for content between previous and this entity
       if (range.offset > lastIndex) {
-        nodes.push(new ContentNode({ endOffset: range.offset }));
+        nodes.push(new ContentNode({ start: lastIndex, end: range.offset }));
       }
       // push the node for the entity
       nodes.push(new ContentNode({
         entity: range.key,
-        endOffset: range.offset + range.length,
+        start: range.offset,
+        end: range.offset + range.length,
       }));
       lastIndex = range.offset + range.length;
     });
@@ -126,7 +100,8 @@ export default class RawParser {
     // finaly add a node for the remaining text if any
     if (lastIndex < text.length) {
       nodes.push(new ContentNode({
-        endOffset: lastIndex + text.length,
+        start: lastIndex,
+        end: lastIndex + text.length,
       }));
     }
     return nodes;
@@ -149,7 +124,7 @@ export default class RawParser {
       // reset the stacks
       this.styleStack = [];
       this.stylesToRemove = [];
-      return this.nodeIterator(node, node.endOffset);
+      return this.nodeIterator(node, node.start, node.end);
     });
     return new ContentNode({ content: parsedNodes });
   }
