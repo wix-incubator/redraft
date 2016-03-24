@@ -1,3 +1,6 @@
+## 0.2.3
+- some cleanup and dropped lodash as a dependency
+
 ## 0.2.2
 - rewrite of the nodeIterator and pushContent methods
 

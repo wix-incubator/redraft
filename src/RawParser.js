@@ -1,15 +1,9 @@
-import { difference, filter } from 'lodash';
 import { ContentNode } from './ContentNode';
 
 export default class RawParser {
 
-  // values in haystack must be unique
-  containsSome(haystack, needles) {
-    return haystack.length > difference(haystack, needles).length;
-  }
-
   relevantStyles(offset) {
-    const styles = filter(this.ranges,
+    const styles = this.ranges.filter(
       (range) => offset >= range.offset && offset < (range.offset + range.length)
     );
     return styles.map((style) => style.style);

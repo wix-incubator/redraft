@@ -1,6 +1,6 @@
 {
   "name": "redraft",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Renders the result of Draft.js convertToRaw using provided callbacks, works well with React",
   "main": "./lib/index.js",
   "scripts": {
@@ -16,12 +16,11 @@
     "url": "https://github.com/lokiuz/redraft.git"
   },
   "keywords": [
-    "draft-js"
+    "draftjs", "react"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.6.1"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
