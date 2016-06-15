@@ -19,7 +19,7 @@ export default class RawParser {
     relevantIndexes = this.addIndexes(relevantIndexes, entityRanges);
     // add text start and end to relevant indexes
     relevantIndexes.push(0);
-    relevantIndexes.push(text.length - 1);
+    relevantIndexes.push(text.length);
     const uniqueRelevantIndexes = relevantIndexes.filter(
       (value, index, self) => self.indexOf(value) === index
     );
