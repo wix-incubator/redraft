@@ -66,6 +66,18 @@ const raw = {
   }],
 };
 
+const raw2 = {
+  entityMap: {},
+  blocks: [{
+    key: 'az45a',
+    text: '!', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+  }],
+};
+
 // to render to a plain string we need to be sure all the arrays are joined after render
 const joinRecursively = (array) => array.map((child) => {
   if (Array.isArray(child)) {
@@ -94,5 +106,10 @@ describe('renderRaw', () => {
     const rendered = renderRaw(raw, inlineRenderers, blockRenderers, entityRenderers);
     const joined = joinRecursively(rendered);
     joined.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
+  });
+  it('should render blocks with single char correctly', () => {
+    const rendered = renderRaw(raw2, inlineRenderers, blockRenderers, entityRenderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<p>!</p>'); // eslint-disable-line max-len
   });
 });
