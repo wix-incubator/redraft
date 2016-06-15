@@ -1,3 +1,6 @@
+## 0.2.4
+- fixes blocks with content length=1 do not display #1
+
 ## 0.2.3
 - some cleanup and dropped lodash as a dependency
 
