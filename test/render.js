@@ -1,5 +1,5 @@
 import chai from 'chai';
-import { renderRaw } from '../src';
+import redraft, { renderRaw } from '../src';
 
 chai.should();
 
@@ -87,29 +87,41 @@ const joinRecursively = (array) => array.map((child) => {
 }).join('');
 
 // render to HTML
-const inlineRenderers = {
+
+const inline = {
   BOLD: (children) => `<strong>${children.join('')}</strong>`,
   ITALIC: (children) => `<em>${children.join('')}</em>`,
 };
 
-const blockRenderers = {
+const blocks = {
   unstyled: (children) => `<p>${joinRecursively(children)}</p>`,
   blockquote: (children) => `<blockquote>${joinRecursively(children)}</blockquote>`,
 };
 
-const entityRenderers = {
+const entities = {
   LINK: (children, entity) => `<a href="${entity.url}" >${joinRecursively(children)}</a>`,
+};
+
+const renderers = {
+  inline,
+  blocks,
+  entities,
 };
 
 describe('renderRaw', () => {
   it('should render correctly', () => {
-    const rendered = renderRaw(raw, inlineRenderers, blockRenderers, entityRenderers);
+    const rendered = redraft(raw, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
   });
   it('should render blocks with single char correctly', () => {
-    const rendered = renderRaw(raw2, inlineRenderers, blockRenderers, entityRenderers);
+    const rendered = redraft(raw2, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal('<p>!</p>'); // eslint-disable-line max-len
+  });
+  it('should render correctly with deprecated api', () => {
+    const rendered = renderRaw(raw, inline, blocks, entities);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
   });
 });
