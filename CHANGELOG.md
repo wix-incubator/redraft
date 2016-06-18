@@ -1,3 +1,10 @@
+## 0.3.0
+- redraft now has a default export
+- directly importing renderRaw is now deprecated
+- renderers should now be provided in a single object as a second argument
+- added warnings for all deprecated calls in non production
+- updated readme to reflect the changes
+
 ## 0.2.4
 - fixes blocks with content length=1 do not display #1
 
