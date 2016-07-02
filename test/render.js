@@ -78,7 +78,7 @@ const raw2 = {
   }],
 };
 
-const rawWithDepth =  {
+const rawWithDepth = {
   entityMap: {},
   blocks: [
     {
@@ -110,6 +110,80 @@ const rawWithDepth =  {
       type: 'ordered-list-item',
       text: 'Go',
       depth: 2,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    }],
+};
+
+const rawWithDepth2 = {
+  entityMap: {},
+  blocks: [
+    {
+      key: 'eunbc',
+      type: 'unordered-list-item',
+      text: 'Hey',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '9nl08',
+      type: 'unordered-list-item',
+      text: 'Ho',
+      depth: 1,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '9qp7i',
+      type: 'unordered-list-item',
+      text: 'Let\'s',
+      depth: 2,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '1hegu',
+      type: 'ordered-list-item',
+      text: 'Go',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    }],
+};
+
+const rawWithDepth3 = {
+  entityMap: {},
+  blocks: [
+    {
+      key: 'eunbc',
+      type: 'unordered-list-item',
+      text: 'Hey',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '9nl08',
+      type: 'unordered-list-item',
+      text: 'Ho',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '9qp7i',
+      type: 'unordered-list-item',
+      text: 'Let\'s',
+      depth: 2,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '1hegu',
+      type: 'ordered-list-item',
+      text: 'Go',
+      depth: 0,
       inlineStyleRanges: [],
       entityRanges: [],
     }],
@@ -165,9 +239,19 @@ describe('renderRaw', () => {
     const joined = joinRecursively(rendered);
     joined.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
   });
-  it('should render blocks with depth correctly', () => {
+  it('should render blocks with depth correctly 1/2', () => {
     const rendered = redraft(rawWithDepth, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal("<ul><li>Hey<ul><li>Ho<ul><li>Let's</li></ul><ol><li>Go</li></ol></li></ul></li></ul>"); // eslint-disable-line max-len
+  });
+  it('should render blocks with depth correctly 2/2', () => {
+    const rendered = redraft(rawWithDepth2, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal("<ul><li>Hey<ul><li>Ho<ul><li>Let's</li></ul></li></ul></li></ul><ol><li>Go</li></ol>"); // eslint-disable-line max-len
+  });
+  it('should render blocks with depth when depth jumps from 0 to 2', () => {
+    const rendered = redraft(rawWithDepth3, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal("<ul><li>Hey</li><li>Ho<ul><li>Let's</li></ul></li></ul><ol><li>Go</li></ol>"); // eslint-disable-line max-len
   });
 });

@@ -1,3 +1,7 @@
+## 0.4.0
+- added support for blocks with depth
+- block renderer now receives a second argument - depth
+
 ## 0.3.0
 - redraft now has a default export
 - directly importing renderRaw is now deprecated

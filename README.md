@@ -53,7 +53,8 @@ const renderers = {
     CODE: (children) => <span style={styles.code}>{children}</span>,
   },
   /**
-   * Note that children are an array of blocks with same styling
+   * Blocks receive children and depth
+   * Note that children are an array of blocks with same styling,
    */
   blocks: {
     unstyled: (children) => children.map(child => <p>{child}</p>),
@@ -61,11 +62,11 @@ const renderers = {
     'header-one': (children) => children.map(child => <h1>{child}</h1>),
     'header-two': (children) => children.map(child => <h2>{child}</h2>),
     'code-block': (children) => <pre style={styles.codeBlock}>{addBreaklines(children)}</pre>,
-    'unordered-list-item': (children) => <ul>{children.map(child => <li>{child}</li>)}</ul>,
-    'ordered-list-item': (children) => <ol>{children.map(child => <li>{child}</li>)}</ol>,
+    'unordered-list-item': (children, depth) => <ul class={`ul-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ul>,
+    'ordered-list-item': (children, depth) => <ol class={`ol-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ol>,
   },
   /**
-   * For entities what gets passed is children and the entity data
+   * Entities receive children and the entity data
    */
   entities: {
     LINK: (children, data) => <Link to={data.url}>{children}/>,

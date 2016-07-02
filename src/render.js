@@ -41,6 +41,43 @@ export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
   return children;
 };
 
+/**
+ * Nests blocks by depth as children
+ */
+const byDepth = blocks => {
+  let group = [];
+  const depthStack = [];
+  let prevDepth = 0;
+  const unwind = targetDepth => {
+    let i = prevDepth - targetDepth;
+    // in case depthStack is too short for target depth
+    if (depthStack.length < i) {
+      i = depthStack.length;
+    }
+    for (i; i > 0; i--) {
+      const tmp = group;
+      group = depthStack.pop();
+      group[group.length - 1].children = tmp;
+    }
+  };
+
+  blocks.forEach((block) => {
+    // if type of the block has changed render the block and clear group
+    if (prevDepth < block.depth) {
+      depthStack.push(group);
+      group = [];
+    } else if (prevDepth > block.depth) {
+      unwind(block.depth);
+    }
+    prevDepth = block.depth;
+    group.push(block);
+  });
+  if (prevDepth !== 0) {
+    unwind(0);
+  }
+  return group;
+};
+
 
 /**
  * Renders blocks grouped by type using provided blockStyleRenderers
@@ -52,26 +89,35 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
   let group = [];
   let prevType = null;
   const Parser = new RawParser;
+  let prevDepth = 0;
   blocks.forEach((block) => {
     const node = Parser.parse(block);
     const renderedNode = renderNode(node, inlineRendrers, entityRenderers, entityMap);
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
-        rendered.push(blockRenderers[prevType](group));
+        rendered.push(blockRenderers[prevType](group, prevDepth));
       } else {
         rendered.push(group);
       }
       group = [];
     }
+    // handle children
+    if (block.children) {
+      const children = renderBlocks(block.children, inlineRendrers,
+      blockRenderers, entityRenderers, entityMap);
+      renderedNode.push(children);
+    }
     // push current node to group
     group.push(renderedNode);
+
     // lastly save current type for refference
     prevType = block.type;
+    prevDepth = block.depth;
   });
   // render last group
   if (blockRenderers[prevType]) {
-    rendered.push(blockRenderers[prevType](group));
+    rendered.push(blockRenderers[prevType](group, prevDepth));
   } else {
     rendered.push(group);
   }
@@ -91,7 +137,7 @@ export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
     // Logs a deprecation warning if not in production
     deprecated('passing renderers separetly is deprecated'); // eslint-disable-line
   }
-  const blocks = raw.blocks;
+  const blocks = byDepth(raw.blocks);
   if (!blocks || blocks[0].text.length === 0) {
     return null;
   }
