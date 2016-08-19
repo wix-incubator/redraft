@@ -78,6 +78,51 @@ const raw2 = {
   }],
 };
 
+const rawWithEmptyLine = {
+  entityMap: {},
+  blocks: [{
+    key: 'az45a',
+    text: '!', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+  },{
+    key: 'az45b',
+    text: '', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+  },{
+    key: 'az45c',
+    text: '!', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+  }],
+};
+
+const rawEmptyFirstLine = {
+  entityMap: {},
+  blocks: [{
+    key: 'az45b',
+    text: '', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+  },{
+    key: 'az45a',
+    text: '!', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+  }],
+};
+
 const rawWithDepth = {
   entityMap: {},
   blocks: [
@@ -248,6 +293,16 @@ describe('renderRaw', () => {
     const rendered = redraft(rawWithDepth2, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal("<ul><li>Hey<ul><li>Ho<ul><li>Let's</li></ul></li></ul></li></ul><ol><li>Go</li></ol>"); // eslint-disable-line max-len
+  });
+  it('should render blocks containing empty lines', () => {
+    const rendered = redraft(rawWithEmptyLine, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal("<p>!!</p>"); // eslint-disable-line max-len
+  });
+  it('should render blocks when first block is empty', () => {
+    const rendered = redraft(rawEmptyFirstLine, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal("<p>!</p>"); // eslint-disable-line max-len
   });
   it('should render blocks with depth when depth jumps from 0 to 2', () => {
     const rendered = redraft(rawWithDepth3, renderers);
