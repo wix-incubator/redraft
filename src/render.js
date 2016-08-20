@@ -1,5 +1,6 @@
 import RawParser from './RawParser';
 import deprecated from './deprecated';
+import warn from './warn';
 
 /**
  * Concats or insets a string at given array index
@@ -128,6 +129,14 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
  * Converts and renders each block of Draft.js rawState
  */
 export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
+  if (!raw || !Array.isArray(raw.blocks)) {
+    warn('invalid raw object');
+    return null;
+  }
+  // If the lenght of the blocks array is 0 its should not log a warning but still return a null
+  if (!raw.blocks.length) {
+    return null;
+  }
   let { inline: inlineRendrers, blocks: blockRenderers, entities: entityRenderers } = renderers;
   // Fallback to deprecated api
   if (!inlineRendrers && !blockRenderers && !entityRenderers) {
@@ -138,13 +147,10 @@ export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
     deprecated('passing renderers separetly is deprecated'); // eslint-disable-line
   }
   const blocks = byDepth(raw.blocks);
-  if (!blocks || blocks[0].text.length === 0) {
-    return null;
-  }
   return renderBlocks(blocks, inlineRendrers, blockRenderers, entityRenderers, raw.entityMap);
 };
 
 export const renderRaw = (...args) => {
-  deprecated('renderRaw is deprecated us the default export');
+  deprecated('renderRaw is deprecated use the default export');
   return render(...args);
 };
