@@ -1,3 +1,8 @@
+## 0.4.1
+- fixes result is null, when first line is empty #4
+- added some extra validation and a warning in non production env if the raw is invalid
+- passing a raw with an empty blocks array returns a null
+
 ## 0.4.0
 - added support for blocks with depth
 - block renderer now receives a second argument - depth
