@@ -1,7 +1,7 @@
 import chai from 'chai';
 import redraft, { renderRaw } from '../src';
 
-chai.should();
+const should = chai.should();
 
 const raw = {
   entityMap: {
@@ -197,6 +197,16 @@ const rawWithDepth2 = {
     }],
 };
 
+const emptyRaw = {
+  entityMap: {},
+  blocks: [],
+};
+
+const invalidRaw = {
+  entityMap: {},
+  blocks: {},
+};
+
 const rawWithDepth3 = {
   entityMap: {},
   blocks: [
@@ -308,5 +318,21 @@ describe('renderRaw', () => {
     const rendered = redraft(rawWithDepth3, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal("<ul><li>Hey</li><li>Ho<ul><li>Let's</li></ul></li></ul><ol><li>Go</li></ol>"); // eslint-disable-line max-len
+  });
+  it('should render null for empty raw blocks array', () => {
+    const rendered = redraft(emptyRaw, renderers);
+    should.equal(rendered, null);
+  });
+  it('should render null for an invalid input 1/2', () => {
+    const rendered = redraft(invalidRaw, renderers);
+    should.equal(rendered, null);
+  });
+  it('should render null for an invalid input 2/2', () => {
+    const rendered = redraft([], renderers);
+    should.equal(rendered, null);
+  });
+  it('should render null for no input', () => {
+    const rendered = redraft();
+    should.equal(rendered, null);
   });
 });
