@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lokiuz/redraft.svg?branch=master)](https://travis-ci.org/lokiuz/redraft)
+
 # Redraft
 Renders the result of Draft.js convertToRaw using provided callbacks, works well with React
 
