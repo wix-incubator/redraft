@@ -1,0 +1,14 @@
+notifications:
+  email: false
+
+language: node_js
+cache:
+  directories:
+  - node_modules
+
+node_js:
+- '6'
+- '5'
+
+install: 'npm install && npm run compile'
+script: 'npm run test'
