@@ -1,7 +1,10 @@
-[![Build Status](https://travis-ci.org/lokiuz/redraft.svg?branch=master)](https://travis-ci.org/lokiuz/redraft)
 
 # Redraft
 Renders the result of Draft.js convertToRaw using provided callbacks, works well with React
+
+[![Version](https://img.shields.io/npm/v/redraft.svg?style=flat-square)](https://travis-ci.org/lokiuz/redraft)
+[![Build Status](https://img.shields.io/travis/lokiuz/redraft.svg?style=flat-square)](https://www.npmjs.com/package/redraft)
+[![David](https://img.shields.io/david/lokiuz/redraft.svg?style=flat-square)](https://david-dm.org/lokiuz/redraft)
 
 ## What does it do?
 It can convert whole raw state or just specific parts to desired output like React components or an html string.
