@@ -25,9 +25,9 @@ export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
     if (typeof part === 'string') {
       children = pushString(part, children, index);
     } else {
-      index++;
+      index += 1;
       children[index] = renderNode(part, styleRendrers, entityRenderers, entityMap);
-      index++;
+      index += 1;
     }
   });
   if (node.style && styleRendrers[node.style]) {
@@ -45,17 +45,17 @@ export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
 /**
  * Nests blocks by depth as children
  */
-const byDepth = blocks => {
+const byDepth = (blocks) => {
   let group = [];
   const depthStack = [];
   let prevDepth = 0;
-  const unwind = targetDepth => {
+  const unwind = (targetDepth) => {
     let i = prevDepth - targetDepth;
     // in case depthStack is too short for target depth
     if (depthStack.length < i) {
       i = depthStack.length;
     }
-    for (i; i > 0; i--) {
+    for (i; i > 0; i -= 1) {
       const tmp = group;
       group = depthStack.pop();
       group[group.length - 1].children = tmp;
@@ -89,7 +89,7 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
   const rendered = [];
   let group = [];
   let prevType = null;
-  const Parser = new RawParser;
+  const Parser = new RawParser();
   let prevDepth = 0;
   blocks.forEach((block) => {
     const node = Parser.parse(block);

@@ -1,38 +1,75 @@
-import { ContentNode } from './ContentNode';
+import ContentNode from './ContentNode';
+
+  /**
+   * creates nodes with entity keys and the endOffset
+   */
+function createEntityNodes(entityRanges, text) {
+  let lastIndex = 0;
+  const nodes = [];
+  // if thers no entities will return just a single item
+  if (entityRanges.length < 1) {
+    nodes.push(new ContentNode({ start: 0, end: text.length }));
+    return nodes;
+  }
+
+  entityRanges.forEach((range) => {
+    // create an empty node for content between previous and this entity
+    if (range.offset > lastIndex) {
+      nodes.push(new ContentNode({ start: lastIndex, end: range.offset }));
+    }
+    // push the node for the entity
+    nodes.push(new ContentNode({
+      entity: range.key,
+      start: range.offset,
+      end: range.offset + range.length,
+    }));
+    lastIndex = range.offset + range.length;
+  });
+
+  // finaly add a node for the remaining text if any
+  if (lastIndex < text.length) {
+    nodes.push(new ContentNode({
+      start: lastIndex,
+      end: lastIndex + text.length,
+    }));
+  }
+  return nodes;
+}
+
+function addIndexes(indexes, ranges) {
+  ranges.forEach((range) => {
+    indexes.push(range.offset);
+    indexes.push(range.offset + range.length);
+  });
+  return indexes;
+}
+
+/**
+ * Creates an array of sorted char indexes to avoid iterating over every single character
+ */
+function getRelevantIndexes(text, inlineRanges, entityRanges = []) {
+  let relevantIndexes = [];
+  // set indexes to corresponding keys to ensure uniquenes
+  relevantIndexes = addIndexes(relevantIndexes, inlineRanges);
+  relevantIndexes = addIndexes(relevantIndexes, entityRanges);
+  // add text start and end to relevant indexes
+  relevantIndexes.push(0);
+  relevantIndexes.push(text.length);
+  const uniqueRelevantIndexes = relevantIndexes.filter(
+    (value, index, self) => self.indexOf(value) === index
+  );
+  // and sort it
+  return uniqueRelevantIndexes.sort((aa, bb) => (aa - bb));
+}
+
 
 export default class RawParser {
 
   relevantStyles(offset) {
     const styles = this.ranges.filter(
-      (range) => offset >= range.offset && offset < (range.offset + range.length)
+      range => offset >= range.offset && offset < (range.offset + range.length)
     );
-    return styles.map((style) => style.style);
-  }
-
-  /**
-   * Creates an array of sorted char indexes to avoid iterating over every single character
-   */
-  getRelevantIndexes(text, inlineRanges, entityRanges = []) {
-    let relevantIndexes = [];
-    // set indexes to corresponding keys to ensure uniquenes
-    relevantIndexes = this.addIndexes(relevantIndexes, inlineRanges);
-    relevantIndexes = this.addIndexes(relevantIndexes, entityRanges);
-    // add text start and end to relevant indexes
-    relevantIndexes.push(0);
-    relevantIndexes.push(text.length);
-    const uniqueRelevantIndexes = relevantIndexes.filter(
-      (value, index, self) => self.indexOf(value) === index
-    );
-    // and sort it
-    return uniqueRelevantIndexes.sort((aa, bb) => (aa - bb));
-  }
-
-  addIndexes(indexes, ranges) {
-    ranges.forEach((range) => {
-      indexes.push(range.offset);
-      indexes.push(range.offset + range.length);
-    });
-    return indexes;
+    return styles.map(style => style.style);
   }
 
   /**
@@ -66,42 +103,6 @@ export default class RawParser {
   }
 
   /**
-   * creates nodes with entity keys and the endOffset
-   */
-  createEntityNodes(entityRanges, text) {
-    let lastIndex = 0;
-    const nodes = [];
-    // if thers no entities will return just a single item
-    if (entityRanges.length < 1) {
-      nodes.push(new ContentNode({ start: 0, end: text.length }));
-      return nodes;
-    }
-
-    entityRanges.forEach(range => {
-      // create an empty node for content between previous and this entity
-      if (range.offset > lastIndex) {
-        nodes.push(new ContentNode({ start: lastIndex, end: range.offset }));
-      }
-      // push the node for the entity
-      nodes.push(new ContentNode({
-        entity: range.key,
-        start: range.offset,
-        end: range.offset + range.length,
-      }));
-      lastIndex = range.offset + range.length;
-    });
-
-    // finaly add a node for the remaining text if any
-    if (lastIndex < text.length) {
-      nodes.push(new ContentNode({
-        start: lastIndex,
-        end: lastIndex + text.length,
-      }));
-    }
-    return nodes;
-  }
-
-  /**
    * Converts raw block to object with nested style objects,
    * while it returns an object not a string
    * the idea is still mostly same as backdraft.js (https://github.com/evanc/backdraft-js)
@@ -111,10 +112,10 @@ export default class RawParser {
     this.ranges = ranges;
     this.iterator = 0;
     // get all the relevant indexes for whole block
-    this.relevantIndexes = this.getRelevantIndexes(text, ranges, entityRanges);
+    this.relevantIndexes = getRelevantIndexes(text, ranges, entityRanges);
     // create entity or empty nodes to place the inline styles in
-    const entityNodes = this.createEntityNodes(entityRanges, text);
-    const parsedNodes = entityNodes.map(node => {
+    const entityNodes = createEntityNodes(entityRanges, text);
+    const parsedNodes = entityNodes.map((node) => {
       // reset the stacks
       this.styleStack = [];
       this.stylesToRemove = [];

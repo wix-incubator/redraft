@@ -1,4 +1,4 @@
-export class ContentNode {
+class ContentNode {
 
   constructor(props) {
     this.content = props.content || [];
@@ -41,3 +41,5 @@ export class ContentNode {
   }
 
 }
+
+export default ContentNode;
