@@ -244,6 +244,62 @@ const rawWithDepth3 = {
     }],
 };
 
+const rawStyleWithEntities = {
+  entityMap: {
+    0: {
+      type: 'ENTITY',
+      mutability: 'MUTABLE',
+      data: {
+        data: {
+          color: '#ee6a56',
+        },
+      },
+    },
+    1: {
+      type: 'ENTITY',
+      mutability: 'IMMUTABLE',
+      data: {
+        data: {
+          placeholder: 'greeting',
+          color: '#ee6a56',
+        },
+      },
+    },
+  },
+  blocks: [
+    {
+      key: 'qaie',
+      text: 'This is a Greeting redraftbug.',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [
+        {
+          offset: 0,
+          length: 30,
+          style: 'BOLD',
+        },
+      ],
+      entityRanges: [
+        {
+          offset: 5,
+          length: 5,
+          key: 0,
+        }, {
+          offset: 10,
+          length: 8,
+          key: 1,
+        }, {
+          offset: 18,
+          length: 8,
+          key: 0,
+        },
+      ],
+      data: {},
+    },
+  ],
+};
+
+
 // to render to a plain string we need to be sure all the arrays are joined after render
 const joinRecursively = (array) => array.map((child) => {
   if (Array.isArray(child)) {
@@ -259,6 +315,7 @@ const makeList = children => children.map(child => `<li>${joinRecursively(child)
 const inline = {
   BOLD: (children) => `<strong>${children.join('')}</strong>`,
   ITALIC: (children) => `<em>${children.join('')}</em>`,
+  UND: (children) => `<em>${children.join('')}</em>`,
 };
 
 const blocks = {
@@ -270,6 +327,7 @@ const blocks = {
 
 const entities = {
   LINK: (children, entity) => `<a href="${entity.url}" >${joinRecursively(children)}</a>`,
+  ENTITY: (children, entity) => `<div style="color: ${entity.data.color}" >${joinRecursively(children)}</div>`,
 };
 
 const renderers = {
@@ -318,6 +376,11 @@ describe('renderRaw', () => {
     const rendered = redraft(rawWithDepth3, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal("<ul><li>Hey</li><li>Ho<ul><li>Let's</li></ul></li></ul><ol><li>Go</li></ol>"); // eslint-disable-line max-len
+  });
+  it('should style last node properly when its after an entity', () => {
+    const rendered = redraft(rawStyleWithEntities, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<p><strong>This </strong><div style="color: #ee6a56" ><strong>is a </strong></div><div style="color: #ee6a56" ><strong>Greeting</strong></div><div style="color: #ee6a56" ><strong> redraft</strong></div><strong>bug.</strong></p>'); // eslint-disable-line max-len
   });
   it('should render null for empty raw blocks array', () => {
     const rendered = redraft(emptyRaw, renderers);
