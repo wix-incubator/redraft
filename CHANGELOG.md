@@ -1,3 +1,7 @@
+## 0.4.2
+- fixes final ContentNode being unstyled when there are mutliple entities in a block #9
+- some minor code styling
+
 ## 0.4.1
 - fixes result is null, when first line is empty #4
 - added some extra validation and a warning in non production env if the raw is invalid
