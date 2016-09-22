@@ -30,7 +30,7 @@ function createEntityNodes(entityRanges, text) {
   if (lastIndex < text.length) {
     nodes.push(new ContentNode({
       start: lastIndex,
-      end: lastIndex + text.length,
+      end: text.length,
     }));
   }
   return nodes;
