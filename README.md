@@ -17,10 +17,9 @@ $ npm install --save redraft
 ```
 
 ## Example rendering to React
-``` js
-import React, { Component, PropTypes } from 'react';
-import redraft from 'redraft';
 
+Define all the extra bits:
+``` js
 /**
  *  You can use inline styles or classNames inside your callbacks
  */
@@ -45,7 +44,7 @@ const addBreaklines = (children) => children.map(child => [child, <br />]);
 
 
 /**
- * As of 0.3.0 you should pass a single object with all the callbacks
+ * Define the renderers
  */
 const renderers = {
   /**
@@ -79,6 +78,10 @@ const renderers = {
   },
 }
 
+```
+
+Now what is needed is a simple renderer component to wrap it all.
+```js
 export default class Renderer extends Component {
 
   static propTypes = {

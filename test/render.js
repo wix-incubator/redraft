@@ -375,9 +375,12 @@ const renderers = {
 
 const blocksWithKeys = {
   unstyled: (children, depth, keys) => `<p key="${keys.join(',')}">${joinRecursively(children)}</p>`,
-  blockquote: (children, depth, keys) => `<blockquote key="${keys.join(',')}">${joinRecursively(children)}</blockquote>`,
-  'ordered-list-item': (children, depth, keys) => `<ol key="${keys.join(',')}">${makeList(children)}</ol>`,
-  'unordered-list-item': (children, depth, keys) => `<ul key="${keys.join(',')}">${makeList(children)}</ul>`,
+  blockquote:
+    (children, depth, keys) => `<blockquote key="${keys.join(',')}">${joinRecursively(children)}</blockquote>`,
+  'ordered-list-item':
+    (children, depth, keys) => `<ol key="${keys.join(',')}">${makeList(children)}</ol>`,
+  'unordered-list-item':
+    (children, depth, keys) => `<ul key="${keys.join(',')}">${makeList(children)}</ul>`,
 };
 
 const renderersWithKeys = {
