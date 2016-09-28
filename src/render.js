@@ -18,7 +18,7 @@ const pushString = (string, array, index) => {
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
-export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
+export const renderNode = (node, styleRenderers, entityRenderers, entityMap) => {
   let children = [];
   let index = 0;
   node.content.forEach((part) => {
@@ -26,12 +26,12 @@ export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
       children = pushString(part, children, index);
     } else {
       index += 1;
-      children[index] = renderNode(part, styleRendrers, entityRenderers, entityMap);
+      children[index] = renderNode(part, styleRenderers, entityRenderers, entityMap);
       index += 1;
     }
   });
-  if (node.style && styleRendrers[node.style]) {
-    return styleRendrers[node.style](children);
+  if (node.style && styleRenderers[node.style]) {
+    return styleRenderers[node.style](children);
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
@@ -83,21 +83,24 @@ const byDepth = (blocks) => {
 /**
  * Renders blocks grouped by type using provided blockStyleRenderers
  */
-const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
+const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
                       entityRenderers = {}, entityMap = {}) => {
   // initialize
   const rendered = [];
   let group = [];
   let prevType = null;
-  const Parser = new RawParser();
   let prevDepth = 0;
+  let prevKeys = [];
+  const Parser = new RawParser();
+
   blocks.forEach((block) => {
     const node = Parser.parse(block);
-    const renderedNode = renderNode(node, inlineRendrers, entityRenderers, entityMap);
+    const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap);
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
-        rendered.push(blockRenderers[prevType](group, prevDepth));
+        rendered.push(blockRenderers[prevType](group, prevDepth, prevKeys));
+        prevKeys = [];
       } else {
         rendered.push(group);
       }
@@ -105,7 +108,7 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
     }
     // handle children
     if (block.children) {
-      const children = renderBlocks(block.children, inlineRendrers,
+      const children = renderBlocks(block.children, inlineRenderers,
       blockRenderers, entityRenderers, entityMap);
       renderedNode.push(children);
     }
@@ -115,10 +118,11 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
     // lastly save current type for refference
     prevType = block.type;
     prevDepth = block.depth;
+    prevKeys.push(block.key);
   });
   // render last group
   if (blockRenderers[prevType]) {
-    rendered.push(blockRenderers[prevType](group, prevDepth));
+    rendered.push(blockRenderers[prevType](group, prevDepth, prevKeys));
   } else {
     rendered.push(group);
   }
@@ -137,17 +141,17 @@ export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
   if (!raw.blocks.length) {
     return null;
   }
-  let { inline: inlineRendrers, blocks: blockRenderers, entities: entityRenderers } = renderers;
+  let { inline: inlineRenderers, blocks: blockRenderers, entities: entityRenderers } = renderers;
   // Fallback to deprecated api
-  if (!inlineRendrers && !blockRenderers && !entityRenderers) {
-    inlineRendrers = renderers;
+  if (!inlineRenderers && !blockRenderers && !entityRenderers) {
+    inlineRenderers = renderers;
     blockRenderers = arg3;
     entityRenderers = arg4;
     // Logs a deprecation warning if not in production
     deprecated('passing renderers separetly is deprecated'); // eslint-disable-line
   }
   const blocks = byDepth(raw.blocks);
-  return renderBlocks(blocks, inlineRendrers, blockRenderers, entityRenderers, raw.entityMap);
+  return renderBlocks(blocks, inlineRenderers, blockRenderers, entityRenderers, raw.entityMap);
 };
 
 export const renderRaw = (...args) => {
