@@ -63,12 +63,13 @@ const renderers = {
    */
   blocks: {
     unstyled: (children) => children.map(child => <p>{child}</p>),
-    blockquote: (children) => <blockquote>{addBreaklines(children)}</blockquote>,
+    blockquote: (children) => <blockquote >{addBreaklines(children)}</blockquote>,
     'header-one': (children) => children.map(child => <h1>{child}</h1>),
     'header-two': (children) => children.map(child => <h2>{child}</h2>),
-    'code-block': (children) => <pre style={styles.codeBlock}>{addBreaklines(children)}</pre>,
-    'unordered-list-item': (children, depth) => <ul class={`ul-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ul>,
-    'ordered-list-item': (children, depth) => <ol class={`ol-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ol>,
+    // You can also access the original keys of the blocks
+    'code-block': (children, depth, keys) => <pre style={styles.codeBlock} key={keys[0]} >{addBreaklines(children)}</pre>,
+    'unordered-list-item': (children, depth, keys) => <ul key={keys[keys.length - 1]} class={`ul-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ul>,
+    'ordered-list-item': (children, depth, keys) => <ol key={keys.join('|')} class={`ol-level-${depth}`}>{children.map((child, index)=> <li key={keys[index]}>{child}</li>)}</ol>,
   },
   /**
    * Entities receive children and the entity data
@@ -111,7 +112,7 @@ export default class Renderer extends Component {
 Redraft now exports a default function - this is the recommended way to import the render method.
 Additionally renderers should now be passed as a single object containing `inline`, `blocks` and `entities`
 
-Previous api is deprecated and will log warnings if `NODE_ENV` is not set to `production`
+Previous api is deprecated and will log warnings if `NODE_ENV` is not set to `production`, and will be removed in next minor version.
 
 ## API
 ```js
