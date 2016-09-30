@@ -8,4 +8,4 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-console.log('Welcome to redraft demo');
+console.log('Welcome to redraft demo'); // eslint-disable-line no-console

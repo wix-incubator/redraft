@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import RichEditor from './RichEditor'
-import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
-import Button from './Button'
-import LoadJSON from './LoadJSON'
-import Preview from './Preview'
-import ForkRibbon from './ForkRibbon'
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
+import RichEditor from './RichEditor';
+import Button from './Button';
+import LoadJSON from './LoadJSON';
+import Preview from './Preview';
+import ForkRibbon from './ForkRibbon';
 import './App.css';
 
 class App extends Component {
@@ -15,7 +15,7 @@ class App extends Component {
     const raw = convertToRaw(editorState.getCurrentContent());
     this.state = {
       editorState,
-      raw
+      raw,
     };
   }
 
@@ -24,28 +24,28 @@ class App extends Component {
       editorState,
       raw: convertToRaw(editorState.getCurrentContent()),
       paste: false,
-    })
+    });
   }
 
   handleLog = () => {
-    console.log(this.state.raw);
+    console.log(this.state.raw); // eslint-disable-line no-console
   }
 
   handleLogJSON = () => {
-    console.log(JSON.stringify(this.state.raw));
+    console.log(JSON.stringify(this.state.raw)); // eslint-disable-line no-console
   }
 
-  handleLoad = raw => {
+  handleLoad = (raw) => {
     this.setState({
       editorState: EditorState.createWithContent(convertFromRaw(raw)),
-      raw: raw,
+      raw,
       paste: false,
     });
   }
 
   togglePaste = () => {
     this.setState({
-      paste: !this.state.paste
+      paste: !this.state.paste,
     });
   }
 
@@ -54,7 +54,7 @@ class App extends Component {
       <div className="App">
         <ForkRibbon />
         <div className="App-header">
-          <h2>Redraft rich text example</h2>
+          <h2>Redraft example</h2>
         </div>
         <p className="App-intro">
           Enter some text to see the preview!
