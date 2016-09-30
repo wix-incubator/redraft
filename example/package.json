@@ -2,6 +2,7 @@
   "name": "redraft-richtext-example",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://lokiuz.github.io/redraft",
   "devDependencies": {
     "react-scripts": "0.6.1"
   },
