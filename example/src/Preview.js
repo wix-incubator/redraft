@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import redraft from '../../../lib';
+import redraft from '../../lib';
 
 import './Preview.css';
 
