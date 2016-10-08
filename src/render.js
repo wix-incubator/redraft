@@ -1,6 +1,9 @@
 import RawParser from './RawParser';
-import deprecated from './deprecated';
 import warn from './warn';
+
+const defaultOptions = {
+  joinOutput: false,
+};
 
 /**
  * Concats or insets a string at given array index
@@ -16,9 +19,19 @@ const pushString = (string, array, index) => {
 };
 
 /**
+ * Joins the input if the joinOutput option is enabled
+ */
+const checkJoin = (input, options) => {
+  if (Array.isArray(input) && options.joinOutput) {
+    return input.join('');
+  }
+  return input;
+};
+
+/**
  * Recursively renders a node with nested nodes with given callbacks
  */
-export const renderNode = (node, styleRenderers, entityRenderers, entityMap) => {
+export const renderNode = (node, styleRenderers, entityRenderers, entityMap, options) => {
   let children = [];
   let index = 0;
   node.content.forEach((part) => {
@@ -26,17 +39,17 @@ export const renderNode = (node, styleRenderers, entityRenderers, entityMap) => 
       children = pushString(part, children, index);
     } else {
       index += 1;
-      children[index] = renderNode(part, styleRenderers, entityRenderers, entityMap);
+      children[index] = renderNode(part, styleRenderers, entityRenderers, entityMap, options);
       index += 1;
     }
   });
   if (node.style && styleRenderers[node.style]) {
-    return styleRenderers[node.style](children);
+    return styleRenderers[node.style](checkJoin(children, options));
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
     if (entity && entityRenderers[entity.type]) {
-      return entityRenderers[entity.type](children, entity.data);
+      return entityRenderers[entity.type](checkJoin(children, options), entity.data);
     }
   }
   return children;
@@ -84,8 +97,9 @@ const byDepth = (blocks) => {
  * Renders blocks grouped by type using provided blockStyleRenderers
  */
 const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
-                      entityRenderers = {}, entityMap = {}) => {
+                      entityRenderers = {}, entityMap = {}, userOptions = {}) => {
   // initialize
+  const options = Object.assign({}, defaultOptions, userOptions);
   const rendered = [];
   let group = [];
   let prevType = null;
@@ -96,7 +110,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
 
   blocks.forEach((block) => {
     const node = Parser.parse(block);
-    const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap);
+    const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap, options);
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
@@ -114,7 +128,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
     // handle children
     if (block.children) {
       const children = renderBlocks(block.children, inlineRenderers,
-      blockRenderers, entityRenderers, entityMap);
+      blockRenderers, entityRenderers, entityMap, options);
       renderedNode.push(children);
     }
     // push current node to group
@@ -135,13 +149,13 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   } else {
     rendered.push(group);
   }
-  return rendered;
+  return checkJoin(rendered, options);
 };
 
 /**
  * Converts and renders each block of Draft.js rawState
  */
-export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
+export const render = (raw, renderers = {}, options = {}) => {
   if (!raw || !Array.isArray(raw.blocks)) {
     warn('invalid raw object');
     return null;
@@ -150,20 +164,15 @@ export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
   if (!raw.blocks.length) {
     return null;
   }
-  let { inline: inlineRenderers, blocks: blockRenderers, entities: entityRenderers } = renderers;
-  // Fallback to deprecated api
-  if (!inlineRenderers && !blockRenderers && !entityRenderers) {
-    inlineRenderers = renderers;
-    blockRenderers = arg3;
-    entityRenderers = arg4;
-    // Logs a deprecation warning if not in production
-    deprecated('passing renderers separetly is deprecated'); // eslint-disable-line
-  }
-  const blocks = byDepth(raw.blocks);
-  return renderBlocks(blocks, inlineRenderers, blockRenderers, entityRenderers, raw.entityMap);
-};
+  const { inline: inlineRenderers, blocks: blockRenderers, entities: entityRenderers } = renderers;
 
-export const renderRaw = (...args) => {
-  deprecated('renderRaw is deprecated use the default export');
-  return render(...args);
+  const blocks = byDepth(raw.blocks);
+  return renderBlocks(
+    blocks,
+    inlineRenderers,
+    blockRenderers,
+    entityRenderers,
+    raw.entityMap,
+    options
+  );
 };

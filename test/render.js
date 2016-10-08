@@ -1,5 +1,5 @@
 import chai from 'chai';
-import redraft, { renderRaw } from '../src';
+import redraft from '../src';
 
 const should = chai.should();
 
@@ -427,10 +427,30 @@ const blocksWithKeys = {
     (children, depth, { keys }) => `<ul key="${keys.join(',')}">${makeList(children)}</ul>`,
 };
 
+// render to HTML
+
+const inlineNoJoin = {
+  BOLD: (children) => `<strong>${children}</strong>`,
+  ITALIC: (children) => `<em>${children}</em>`,
+  UND: (children) => `<em>${children}</em>`,
+};
+
+const entitiesNoJoin = {
+  LINK: (children, entity) => `<a href="${entity.url}" >${children}</a>`,
+  ENTITY: (children, entity) => `<div style="color: ${entity.data.color}" >${children}</div>`,
+};
+
+
 const renderersWithKeys = {
   inline,
   blocks: blocksWithKeys,
   entities,
+};
+
+const renderersNoJoin = {
+  inline: inlineNoJoin,
+  blocks,
+  entities: entitiesNoJoin,
 };
 
 describe('renderRaw', () => {
@@ -443,11 +463,6 @@ describe('renderRaw', () => {
     const rendered = redraft(raw2, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal('<p>!</p>');
-  });
-  it('should render correctly with deprecated api', () => {
-    const rendered = renderRaw(raw, inline, blocks, entities);
-    const joined = joinRecursively(rendered);
-    joined.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
   });
   it('should render blocks with depth correctly 1/2', () => {
     const rendered = redraft(rawWithDepth, renderers);
@@ -493,7 +508,11 @@ describe('renderRaw', () => {
     const joined = joinRecursively(rendered);
     joined.should.equal('<div key="1" style="width: 300px;" >A</div><img key="2" src="img.png" alt="C" />'); // eslint-disable-line max-len
   });
-  it('should return null for empty raw blocks array', () => {
+  it('should render correctly without join', () => {
+    const rendered = redraft(raw, renderersNoJoin, { joinOutput: true });
+    rendered.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
+  });
+  it('should render null for empty raw blocks array', () => {
     const rendered = redraft(emptyRaw, renderers);
     should.equal(rendered, null);
   });
