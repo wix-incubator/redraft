@@ -1,8 +1,14 @@
 import RawParser from './RawParser';
 import warn from './warn';
+import checkCleanup from './checkClenup';
 
 const defaultOptions = {
   joinOutput: false,
+  cleanup: {
+    after: ['atomic'],
+    types: ['unstyled'],
+    trim: false,
+  },
 };
 
 /**
@@ -109,6 +115,9 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   const Parser = new RawParser();
 
   blocks.forEach((block) => {
+    if (checkCleanup(block, prevType, options)) {
+      return;
+    }
     const node = Parser.parse(block);
     const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap, options);
     // if type of the block has changed render the block and clear group
