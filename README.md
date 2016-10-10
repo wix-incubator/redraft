@@ -38,10 +38,8 @@ const styles = {
   },
 };
 
-
 // just a helper to add a <br /> after a block
 const addBreaklines = (children) => children.map(child => [child, <br />]);
-
 
 /**
  * Define the renderers
@@ -113,19 +111,14 @@ export default class Renderer extends Component {
 }
 ```
 
-## API changes in 0.3.0
-Redraft now exports a default function - this is the recommended way to import the render method.
-Additionally renderers should now be passed as a single object containing `inline`, `blocks` and `entities`
-
-Previous api is deprecated and will log warnings if `NODE_ENV` is not set to `production`, and will be removed in next minor version.
-
 ## API
 ```js
-redraft(Object:raw, Object:renderers)
+redraft(Object:raw, Object:renderers, Object:options)
 ```
 Returns an array of rendered blocks.
 - raw - result of the Draft.js convertToRaw
 - renderers - object with 3 groups of renders inline, blocks and entities refer to example for more info
+- options - optional settings
 
 ```js
 RawParser.parse(block)
@@ -133,16 +126,23 @@ RawParser.parse(block)
 Parses the provided block and returns an ContentNode object
 
 ```js
-renderNode(Object:node, Object:inlineRendrers, Object:entityRenderers, Object:entityMap)
+renderNode(Object:node, Object:inlineRendrers, Object:entityRenderers, Object:entityMap, Object:options)
 ```
 Returns an rendered single block.
 - node - ContentNode from `RawParser.parse(block)` method
 - inlineRendrers, entityRenderers - callbacks
 - entityMap - the entityMap from raw state `raw.entityMap`
 
+### Options
+- `cleanup` - cleans up blocks with no text or data (metadata or entities), by default cleanup only removes empty `unstyled` blocks inserted directly after `atomic`. Accepts false or an object containing cleanup settings:
+  - `after` - array of block types that are followed by cleanup checks, or `'all'` (default: `['atomic']`)
+  - `types` - array of block types that are checked, or `'all'` (default: `['unstyled']`)
+  - `except` - array of block types that are omitted during cleanup - passing this is same as setting types to `'all'` (default: `undefined`)
+  - `trim` - boolean, should the block text be trimmed when checking if its empty (default: `false`)
+- `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
+
 ## Changelog
 The changelog is avalible here [CHANGELOG](CHANGELOG.md)
-
 
 ## Credits
 - [backdraft-js](https://github.com/evanc/backdraft-js) - For providing a general method of parsing raw state

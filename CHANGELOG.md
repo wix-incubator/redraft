@@ -1,3 +1,8 @@
+## 0.6.0
+- modified block renderers api: keys are now wrapped in an object along with new data key containing block metadata
+- added joinOutput and cleanup options to the API
+- removed deprecated API
+
 ## 0.5.0
 - added block keys array as third parameter to block renderers #11
 - all deprecated methods and warnings will be removed in the next minor version
