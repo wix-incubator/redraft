@@ -3,3 +3,25 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+/*Some style overrides for megadraft-editor*/
+
+.App .public-DraftStyleDefault-ul {
+  line-height: 1.5rem;
+}
+
+.App .megadraft-editor .paragraph + .paragraph{
+    margin-top: 0px;
+}
+
+.App .megadraft-editor blockquote {
+  margin-bottom: 0
+}
+
+.App .megadraft-editor blockquote + .paragraph {
+  margin-top: 2rem;
+}
+
+.App .megadraft-editor blockquote + blockquote {
+  margin-top: 0
+}

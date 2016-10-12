@@ -1,10 +1,3 @@
-.Preview {
-  border: 1px solid #ddd;
-  margin: 20px 0;
-  padding: 20px
-
-}
-
 .Preview-empty {
   text-align: center;
   font-size: large;
@@ -12,7 +5,10 @@
 
 
 .Preview p {
-  font-family: 'Georgia', serif;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.125rem;
+  letter-spacing: -0.037rem;
+  line-height: 1.75rem;
 }
 
 .Preview blockquote {

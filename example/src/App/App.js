@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
-import RichEditor from './RichEditor';
-import Button from './Button';
-import LoadJSON from './LoadJSON';
-import Preview from './Preview';
-import ForkRibbon from './ForkRibbon';
+import { MegadraftEditor, editorStateFromRaw } from 'megadraft';
+import Button from '../Button/Button';
+import LoadJSON from '../LoadJSON/LoadJSON';
+import Preview from '../Preview/Preview';
+import ForkRibbon from '../ForkRibbon/ForkRibbon';
+import sample from '../sample';
 import './App.css';
+import '../../node_modules/megadraft/dist/css/megadraft.css';
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    const editorState = EditorState.createEmpty();
+    // HACK: when using the
+    const editorState = editorStateFromRaw(sample);
     const raw = convertToRaw(editorState.getCurrentContent());
     this.state = {
       editorState,
@@ -43,6 +46,14 @@ class App extends Component {
     });
   }
 
+  handleSample = () => {
+    this.setState({
+      editorState: EditorState.createWithContent(convertFromRaw(sample)),
+      raw: sample,
+      paste: false,
+    });
+  }
+
   togglePaste = () => {
     this.setState({
       paste: !this.state.paste,
@@ -56,19 +67,22 @@ class App extends Component {
         <div className="App-header">
           <h2>Redraft example</h2>
         </div>
-        <p className="App-intro">
-          Enter some text to see the preview!
-        </p>
-        <div className="App-editor">
-          <RichEditor editorState={this.state.editorState} handleUpdate={this.handleUpdate} />
+        {/* <p className="App-intro">IDEA: consider some basic instructions</p> */}
+        <div className="App-column">
+          <div className="App-label">live preview</div>
+          <Preview raw={this.state.raw} />
+        </div>
+        <div className="App-column">
+          <div className="App-label">editor</div>
+          <MegadraftEditor editorState={this.state.editorState} onChange={this.handleUpdate} />
           <Button label="Log raw state" handleClick={this.handleLog} />
           <Button label="Log raw JSON" handleClick={this.handleLogJSON} />
           <Button label="Paste raw JSON" handleClick={this.togglePaste} />
+          <Button label="Reload sample data" handleClick={this.handleSample} />
           {this.state.paste && <LoadJSON handleLoad={this.handleLoad} />}
-          <Preview raw={this.state.raw} />
         </div>
         <footer className="App-footer">
-          This example is based on draft-js RichEditor example. Made with react-crate-app
+          The editor in this example is powered by awesome <a href="https://github.com/globocom/megadraft">megadraft</a>
         </footer>
       </div>
     );
