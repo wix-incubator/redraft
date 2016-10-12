@@ -15,9 +15,10 @@ Additionally you could just parse the raw using provided RawPraser to get a nest
 ``` sh
 $ npm install --save redraft
 ```
+## Demo
+A live version of the example source is available [here](http://lokiuz.github.io/redraft/).
 
-## Example rendering to React
-
+## Rendering to React - simplified example
 Define all the extra bits:
 ``` js
 /**
