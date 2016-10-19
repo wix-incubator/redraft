@@ -35,10 +35,29 @@ const checkJoin = (input, options) => {
   return input;
 };
 
+// return a new generator wich produces sequential keys for nodes
+const getKeyGenerator = () => {
+  let key = 0;
+  const keyGenerator = () => {
+    const current = key;
+    key += 1;
+    return current; // eslint-disable-line no-plusplus
+  };
+  return keyGenerator;
+};
+
+
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
-export const renderNode = (node, styleRenderers, entityRenderers, entityMap, options) => {
+export const renderNode = (
+  node,
+  styleRenderers,
+  entityRenderers,
+  entityMap,
+  options,
+  keyGenerator
+) => {
   let children = [];
   let index = 0;
   node.content.forEach((part) => {
@@ -46,17 +65,31 @@ export const renderNode = (node, styleRenderers, entityRenderers, entityMap, opt
       children = pushString(part, children, index);
     } else {
       index += 1;
-      children[index] = renderNode(part, styleRenderers, entityRenderers, entityMap, options);
+      children[index] = renderNode(
+        part,
+        styleRenderers,
+        entityRenderers,
+        entityMap,
+        options,
+        keyGenerator
+      );
       index += 1;
     }
   });
   if (node.style && styleRenderers[node.style]) {
-    return styleRenderers[node.style](checkJoin(children, options));
+    return styleRenderers[node.style](
+      checkJoin(children, options),
+      { key: keyGenerator() }
+    );
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
     if (entity && entityRenderers[entity.type]) {
-      return entityRenderers[entity.type](checkJoin(children, options), entity.data);
+      return entityRenderers[entity.type](
+        checkJoin(children, options),
+        entity.data,
+        { key: node.entity }
+      );
     }
   }
   return children;
@@ -125,7 +158,14 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
       return;
     }
     const node = Parser.parse(block);
-    const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap, options);
+    const renderedNode = renderNode(
+      node,
+      inlineRenderers,
+      entityRenderers,
+      entityMap,
+      options,
+      getKeyGenerator()
+    );
     // if type of the block has changed or the split flag is set
     // render the block and clear group
     if ((prevType && prevType !== block.type) || splitGroup) {
