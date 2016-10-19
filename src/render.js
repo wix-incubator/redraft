@@ -8,6 +8,7 @@ const defaultOptions = {
     after: ['atomic'],
     types: ['unstyled'],
     trim: false,
+    split: true,
   },
 };
 
@@ -112,27 +113,37 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   let prevDepth = 0;
   let prevKeys = [];
   let prevData = [];
+  let splitGroup = false;
   const Parser = new RawParser();
 
   blocks.forEach((block) => {
     if (checkCleanup(block, prevType, options)) {
+      // Set the split flag if enabled
+      if (options.cleanup.split === true) {
+        splitGroup = true;
+      }
       return;
     }
     const node = Parser.parse(block);
     const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap, options);
-    // if type of the block has changed render the block and clear group
-    if (prevType && prevType !== block.type) {
-      if (blockRenderers[prevType]) {
+    // if type of the block has changed or the split flag is set
+    // render the block and clear group
+    if ((prevType && prevType !== block.type) || splitGroup) {
+      // in case current group is empty it should not be rendered
+      if (blockRenderers[prevType] && group.length > 0) {
         rendered.push(blockRenderers[prevType](group, prevDepth, {
           keys: prevKeys,
           data: prevData,
         }));
-        prevKeys = [];
-        prevData = [];
-      } else {
+      } else if (group.length > 0) {
         rendered.push(group);
       }
+      // reset group vars
+      // IDEA: might be worth to group those into an instance and just newup a new one
+      prevData = [];
+      prevKeys = [];
       group = [];
+      splitGroup = false;
     }
     // handle children
     if (block.children) {
