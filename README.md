@@ -50,7 +50,7 @@ const renderers = {
    * Those callbacks will be called recursively to render a nested structure
    */
   inline: {
-    // The key passed here is just a simple index
+    // The key passed here is just an index based on rendering order inside a block
     BOLD: (children, { key }) => <strong key={key}>{children}</strong>,
     ITALIC: (children, { key }) => <em key={key}>{children}</em>,
     UNDERLINE: (children, { key }) => <u key={key}>{children}</u>,
