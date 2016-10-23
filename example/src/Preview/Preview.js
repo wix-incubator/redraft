@@ -31,13 +31,13 @@ const inline = {
 const addBreaklines = children => children.map(child => [child, <br />]);
 
 const getList = ordered =>
-  (children, depth, { keys }) => (
+  (children, { depth, keys }) => (
     <List key={keys[0]} keys={keys} depth={depth} ordered={ordered}>
       {children.map((child, i) => <li key={keys[i]} >{child}</li>)}
     </List>
   );
 
-const getAtomic = (children, _, { data, keys }) => data.map(
+const getAtomic = (children, { data, keys }) => data.map(
   (item, i) => <AtomicBlock key={keys[i]} {...data[i]} />
 );
 
@@ -47,17 +47,17 @@ const getAtomic = (children, _, { data, keys }) => data.map(
 const blocks = {
   // Rendering blocks like this along with cleanup results in a single p tag for each paragraph
   // adding an empty block closes current paragraph and starts a new one
-  unstyled: (children, _, { keys }) => <p key={keys[0]}>{addBreaklines(children)}</p>,
+  unstyled: (children, { keys }) => <p key={keys[0]}>{addBreaklines(children)}</p>,
   atomic: getAtomic,
   blockquote:
-    (children, _, { keys }) => <blockquote key={keys[0]} >{addBreaklines(children)}</blockquote>,
-  'header-one': (children, _, { keys }) => children.map((child, i) => <h1 key={keys[i]}>{child}</h1>),
-  'header-two': (children, _, { keys }) => children.map((child, i) => <h2 key={keys[i]}>{child}</h2>),
-  'header-three': (children, _, { keys }) => children.map((child, i) => <h3 key={keys[i]}>{child}</h3>),
-  'header-four': (children, _, { keys }) => children.map((child, i) => <h4 key={keys[i]}>{child}</h4>),
-  'header-five': (children, _, { keys }) => children.map((child, i) => <h5 key={keys[i]}>{child}</h5>),
-  'header-six': (children, _, { keys }) => children.map((child, i) => <h6 key={keys[i]}>{child}</h6>),
-  'code-block': (children, _, { keys }) => <pre key={keys[0]} style={styles.codeBlock}>{addBreaklines(children)}</pre>,
+    (children, { keys }) => <blockquote key={keys[0]} >{addBreaklines(children)}</blockquote>,
+  'header-one': (children, { keys }) => children.map((child, i) => <h1 key={keys[i]}>{child}</h1>),
+  'header-two': (children, { keys }) => children.map((child, i) => <h2 key={keys[i]}>{child}</h2>),
+  'header-three': (children, { keys }) => children.map((child, i) => <h3 key={keys[i]}>{child}</h3>),
+  'header-four': (children, { keys }) => children.map((child, i) => <h4 key={keys[i]}>{child}</h4>),
+  'header-five': (children, { keys }) => children.map((child, i) => <h5 key={keys[i]}>{child}</h5>),
+  'header-six': (children, { keys }) => children.map((child, i) => <h6 key={keys[i]}>{child}</h6>),
+  'code-block': (children, { keys }) => <pre key={keys[0]} style={styles.codeBlock}>{addBreaklines(children)}</pre>,
   'unordered-list-item': getList(),
   'ordered-list-item': getList(true),
 };

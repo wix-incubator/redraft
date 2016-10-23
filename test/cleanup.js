@@ -20,7 +20,7 @@ const atomicBlocks = {
 const blocks = {
   unstyled: (children) => `<p>${joinRecursively(children)}</p>`,
   blockquote: (children) => `<blockquote>${joinRecursively(children)}</blockquote>`,
-  atomic: (children, _, { keys, data }) => {
+  atomic: (children, { keys, data }) => {
     const maped = children.map(
       (child, i) => atomicBlocks[data[i].type](child, data[i], keys[i])
     );

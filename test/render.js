@@ -26,7 +26,7 @@ const atomicBlocks = {
 
 const dataBlocks = {
   unstyled: (children) => `<p>${joinRecursively(children)}</p>`,
-  atomic: (children, _, { keys, data }) => {
+  atomic: (children, { keys, data }) => {
     const maped = children.map(
       (child, i) => atomicBlocks[data[i].type](child, data[i], keys[i])
     );
@@ -46,13 +46,13 @@ const renderers = {
 };
 
 const blocksWithKeys = {
-  unstyled: (children, depth, { keys }) => `<p key="${keys.join(',')}">${joinRecursively(children)}</p>`,
+  unstyled: (children, { keys }) => `<p key="${keys.join(',')}">${joinRecursively(children)}</p>`,
   blockquote:
-    (children, depth, { keys }) => `<blockquote key="${keys.join(',')}">${joinRecursively(children)}</blockquote>`,
+    (children, { keys }) => `<blockquote key="${keys.join(',')}">${joinRecursively(children)}</blockquote>`,
   'ordered-list-item':
-    (children, depth, { keys }) => `<ol key="${keys.join(',')}">${makeList(children)}</ol>`,
+    (children, { keys }) => `<ol key="${keys.join(',')}">${makeList(children)}</ol>`,
   'unordered-list-item':
-    (children, depth, { keys }) => `<ul key="${keys.join(',')}">${makeList(children)}</ul>`,
+    (children, { keys }) => `<ul key="${keys.join(',')}">${makeList(children)}</ul>`,
 };
 
 // render to HTML

@@ -66,11 +66,12 @@ const renderers = {
     'header-one': (children) => children.map(child => <h1>{child}</h1>),
     'header-two': (children) => children.map(child => <h2>{child}</h2>),
     // You can also access the original keys of the blocks
-    'code-block': (children, depth, { keys }) => <pre style={styles.codeBlock} key={keys[0]} >{addBreaklines(children)}</pre>,
-    'unordered-list-item': (children, depth, { keys }) => <ul key={keys[keys.length - 1]} class={`ul-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ul>,
-    'ordered-list-item': (children, depth, { keys }) => <ol key={keys.join('|')} class={`ol-level-${depth}`}>{children.map((child, index)=> <li key={keys[index]}>{child}</li>)}</ol>,
+    'code-block': (children, { keys }) => <pre style={styles.codeBlock} key={keys[0]} >{addBreaklines(children)}</pre>,
+    // or depth for nested lists
+    'unordered-list-item': (children, { depth, keys }) => <ul key={keys[keys.length - 1]} class={`ul-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ul>,
+    'ordered-list-item': (children, { depth, keys }) => <ol key={keys.join('|')} class={`ol-level-${depth}`}>{children.map((child, index)=> <li key={keys[index]}>{child}</li>)}</ol>,
     // If your blocks use meta data it can also be accessed like keys
-    atomic: (children, depth, { keys, data }) => children.map((child, i) => <Atomic key={keys[i] {...data[i]} />),
+    atomic: (children, { keys, data }) => children.map((child, i) => <Atomic key={keys[i] {...data[i]} />),
   },
   /**
    * Entities receive children and the entity data

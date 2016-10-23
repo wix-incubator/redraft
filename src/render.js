@@ -132,6 +132,32 @@ const byDepth = (blocks) => {
   return group;
 };
 
+/**
+ * Conditionaly render a group if its not empty,
+ * pass all the params to the renderers
+ */
+const renderGroup = (group, blockRenderers, rendered, params) => {
+  const {
+    prevType: type,
+    prevDepth: depth,
+    prevKeys: keys,
+    prevData: data,
+  } = params;
+  // in case current group is empty it should not be rendered
+  if (group.length === 0) {
+    return;
+  }
+  if (blockRenderers[type]) {
+    rendered.push(blockRenderers[type](group, {
+      depth,
+      keys,
+      data,
+    }));
+    return;
+  }
+  rendered.push(group);
+};
+
 
 /**
  * Renders blocks grouped by type using provided blockStyleRenderers
@@ -167,17 +193,14 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
       getKeyGenerator()
     );
     // if type of the block has changed or the split flag is set
-    // render the block and clear group
+    // render and clear group
     if ((prevType && prevType !== block.type) || splitGroup) {
-      // in case current group is empty it should not be rendered
-      if (blockRenderers[prevType] && group.length > 0) {
-        rendered.push(blockRenderers[prevType](group, prevDepth, {
-          keys: prevKeys,
-          data: prevData,
-        }));
-      } else if (group.length > 0) {
-        rendered.push(group);
-      }
+      renderGroup(
+        group,
+        blockRenderers,
+        rendered,
+        { prevType, prevDepth, prevKeys, prevData }
+      );
       // reset group vars
       // IDEA: might be worth to group those into an instance and just newup a new one
       prevData = [];
@@ -201,14 +224,12 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
     prevData.push(block.data);
   });
   // render last group
-  if (blockRenderers[prevType]) {
-    rendered.push(blockRenderers[prevType](group, prevDepth, {
-      keys: prevKeys,
-      data: prevData,
-    }));
-  } else {
-    rendered.push(group);
-  }
+  renderGroup(
+    group,
+    blockRenderers,
+    rendered,
+    { prevType, prevDepth, prevKeys, prevData }
+  );
   return checkJoin(rendered, options);
 };
 
