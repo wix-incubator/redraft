@@ -9,8 +9,7 @@ const should = chai.should();
 // render to HTML
 const inline = {
   BOLD: (children) => `<strong>${children.join('')}</strong>`,
-  ITALIC: (children) => `<em>${children.join('')}</em>`,
-  UND: (children) => `<em>${children.join('')}</em>`,
+  ITALIC: (children) => `<em>${children.join('')}</em>`
 };
 
 const blocks = {
@@ -61,7 +60,6 @@ const blocksWithKeys = {
 const inlineNoJoin = {
   BOLD: (children) => `<strong>${children}</strong>`,
   ITALIC: (children) => `<em>${children}</em>`,
-  UND: (children) => `<em>${children}</em>`,
 };
 
 const entitiesNoJoin = {

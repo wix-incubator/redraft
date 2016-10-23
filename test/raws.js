@@ -484,6 +484,81 @@ export const rawWithEmptyBlocks2 = {
   ],
 };
 
+export const rawWithEmoji = {
+  entityMap: {},
+  blocks: [{
+    key: 'az45b',
+    text: 'abc 😀', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [
+      {
+        offset: 0,
+        length: 5,
+        style: 'BOLD',
+      },
+      {
+        offset: 4,
+        length: 1,
+        style: 'ITALIC',
+      },
+    ],
+    entityRanges: [],
+  }],
+};
+
+export const rawWithEmoji2 = {
+  entityMap: {},
+  blocks: [{
+    key: 'az45b',
+    text: '😺😀', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [
+      {
+        offset: 0,
+        length: 1,
+        style: 'BOLD',
+      },
+    ],
+    entityRanges: [],
+  }],
+};
+
+export const rawWithEmoji3 = {
+  entityMap: {
+    0: {
+      type: 'ENTITY',
+      mutability: 'MUTABLE',
+      data: {
+        data: {
+          color: '#ee6a56',
+        },
+      },
+    },
+  },
+  blocks: [{
+    key: 'az45b',
+    text: '😺123456😀', // eslint-disable-line max-len
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [
+      {
+        offset: 0,
+        length: 1,
+        style: 'BOLD',
+      },
+    ],
+    entityRanges: [
+      {
+        offset: 6,
+        length: 2,
+        key: 0,
+      },
+    ],
+  }],
+};
+
 export const rawWithEmptyBlocks3 = {
   entityMap: {},
   blocks: [
