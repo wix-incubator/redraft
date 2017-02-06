@@ -34,7 +34,9 @@
     "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.4.1",
+    "linkify-it": "^2.0.3",
     "mocha": "^3.0.2",
-    "rimraf": "^2.5.2"
+    "rimraf": "^2.5.2",
+    "tlds": "^1.182.0"
   }
 }

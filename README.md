@@ -80,6 +80,19 @@ const renderers = {
     // key is the entity key value from raw
     LINK: (children, data, { key }) => <Link key={key} to={data.url}>{children}/>,
   },
+  /**
+   * Entities receive children and the entity data,
+   * based on https://facebook.github.io/draft-js/docs/advanced-topics-decorators.html
+   */
+  decorators: [
+    {
+      // by default linkStrategy receives a ContentBlock stub
+      strategy: linkStrategy,
+      // component is just a callback as with other renderers,
+      // decoratedText just the plain string matched by the strategy
+      component: ({ children, decoratedText }) => <a href={decoratedText}>{children}/>,
+    }
+  ],
 }
 
 ```
@@ -145,6 +158,7 @@ Returns an rendered single block.
   - `trim` - boolean, should the block text be trimmed when checking if its empty (default: `false`)
   - `split` - boolean, splits groups after cleanup, works best when cleanup is enabled for and after all types - more info in the example (default: `true`)
 - `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
+- `createContentBlock` - by default when using decorators redraft creates a ContentBlock stub, its possible to pass a callback that returns a draft-js ContentBlock
 
 ## Changelog
 The changelog is avalible here [CHANGELOG](CHANGELOG.md)

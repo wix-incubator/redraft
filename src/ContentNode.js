@@ -5,6 +5,8 @@ class ContentNode {
     this.start = typeof props.start !== 'undefined' ? props.start : null;
     this.end = typeof props.end !== 'undefined' ? props.end : null;
     this.entity = typeof props.entity !== 'undefined' ? props.entity : null;
+    this.decorator = typeof props.decorator !== 'undefined' ? props.decorator : null;
+    this.decoratedText = typeof props.decoratedText !== 'undefined' ? props.decoratedText : null;
     this.style = props.style || null;
   }
 

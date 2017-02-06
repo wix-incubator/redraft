@@ -92,6 +92,12 @@ export const renderNode = (
       );
     }
   }
+  if (node.decorator !== null) {
+    return node.decorator({
+      children: checkJoin(children, options),
+      decoratedText: node.decoratedText,
+    });
+  }
   return children;
 };
 
@@ -233,6 +239,41 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   return checkJoin(rendered, options);
 };
 
+const populateDecoratorRanges = (array, component) => (start, end) => array.push(
+  { offset: start, length: end - start, component }
+);
+
+
+/**
+ * This is a simple replacement for draft-js ContentBlock,
+ * CharacterList or any related methods are not implented here
+ */
+const stubContentBlock = block => Object.assign({}, block, {
+  get: name => block[name],
+  getText: () => block.text,
+  getType: () => block.type,
+  getKey: () => block.key,
+  getLength: () => block.text.length,
+  getDepth: () => block.depth,
+  getData: () => block.data,
+});
+
+/**
+ * Calls strategy for each decorator with ContentBlock or its stub
+ */
+const decorateBlock = (block, decorators, { createContentBlock }) => {
+  const decoratorRanges = [];
+  decorators.map(({ strategy, component }) => strategy(
+    createContentBlock ? createContentBlock(block) : stubContentBlock(block),
+    populateDecoratorRanges(decoratorRanges, component)
+  ));
+  return Object.assign({}, block, { decoratorRanges });
+};
+
+const withDecorators = (blocks, decorators, options) => blocks.map(
+  block => decorateBlock(block, decorators, options || {})
+);
+
 /**
  * Converts and renders each block of Draft.js rawState
  */
@@ -245,9 +286,18 @@ export const render = (raw, renderers = {}, options = {}) => {
   if (!raw.blocks.length) {
     return null;
   }
-  const { inline: inlineRenderers, blocks: blockRenderers, entities: entityRenderers } = renderers;
-
-  const blocks = byDepth(raw.blocks);
+  const {
+    inline: inlineRenderers,
+    blocks: blockRenderers,
+    entities: entityRenderers,
+    decorators,
+  } = renderers;
+  // If decorators are present, they are maped with the blocks array
+  const blocksWithDecorators = decorators
+    ? withDecorators(raw.blocks, decorators, options)
+    : raw.blocks;
+  // Nest blocks by depth
+  const blocks = byDepth(blocksWithDecorators);
   return renderBlocks(
     blocks,
     inlineRenderers,
