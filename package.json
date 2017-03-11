@@ -27,6 +27,7 @@
     "babel-eslint": "^7.0.0",
     "babel-plugin-array-includes": "^2.0.3",
     "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.23.0",
     "babel-register": "^6.16.3",
     "chai": "^3.5.0",
     "eslint": "^3.7.1",
@@ -36,8 +37,9 @@
     "eslint-plugin-react": "^6.4.1",
     "linkify-it": "^2.0.3",
     "mocha": "^3.0.2",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
     "rimraf": "^2.5.2",
-    "babel-preset-react": "^6.23.0",
-    "react-dom": "^15.4.2"
+    "tlds": "^1.183.0"
   }
 }

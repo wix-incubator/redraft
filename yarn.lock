@@ -2545,7 +2545,7 @@ through@^2.3.6:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
-tlds@^1.182.0:
+tlds@^1.183.0:
   version "1.183.0"
   resolved "https://registry.yarnpkg.com/tlds/-/tlds-1.183.0.tgz#4c9de83801a8a9c9e28674c0748ce854a847e8cd"
 
