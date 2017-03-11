@@ -77,6 +77,10 @@ function getRelevantIndexes(text, inlineRanges, entityRanges = [], decoratorRang
 
 export default class RawParser {
 
+  constructor({ flat = false }) {
+    this.flat = flat;
+  }
+
   relevantStyles(offset) {
     const styles = this.ranges.filter(
       range => offset >= range.offset && offset < (range.offset + range.length)
@@ -97,18 +101,20 @@ export default class RawParser {
       // figure out what styles this char and the next char need
       // (regardless of whether there *is* a next char or not)
       const characterStyles = this.relevantStyles(index);
-
       // calculate distance or set it to 1 if thers no next index
       const distance = indexes[key + 1]
                        ? indexes[key + 1] - index
                        : 1;
       // add all the chars up to next relevantIndex
       const text = getString(this.textArray, index, index + distance);
-      node.pushContent(text, characterStyles);
+      node.pushContent(text, characterStyles, this.flat);
 
       // if thers no next index and thers more text left to push
       if (!indexes[key + 1] && index < end) {
-        node.pushContent(getString(this.textArray, index + 1, end), this.relevantStyles(end - 1));
+        node.pushContent(
+          getString(this.textArray, index + 1, end),
+          this.relevantStyles(end - 1), this.flat
+        );
       }
     });
     return node;
@@ -129,12 +135,9 @@ export default class RawParser {
     this.relevantIndexes = getRelevantIndexes(text, ranges, entityRanges, decoratorRanges);
     // create entity or empty nodes to place the inline styles in
     const nodes = createNodes(entityRanges, decoratorRanges, this.textArray);
-    const parsedNodes = nodes.map((node) => {
-      // reset the stacks
-      this.styleStack = [];
-      this.stylesToRemove = [];
-      return this.nodeIterator(node, node.start, node.end);
-    });
+    const parsedNodes = nodes.map(node =>
+      this.nodeIterator(node, node.start, node.end)
+    );
     return new ContentNode({ content: parsedNodes });
   }
 
