@@ -133,22 +133,38 @@ export default class Renderer extends Component {
 redraft(Object:raw, Object:renderers, Object:options)
 ```
 Returns an array of rendered blocks.
-- raw - result of the Draft.js convertToRaw
-- renderers - object with 3 groups of renders inline, blocks and entities refer to example for more info
-- options - optional settings
+- **raw** - result of the Draft.js convertToRaw
+- **renderers** - object with 3 groups of renders inline (or style), blocks and entities refer to example for more info
+- **options** - optional settings
 
+#### Using style renderer instead of inline
+If provided with a style renderer in the renders, redraft will use it instead of the inline one. This allows a flatter render more like draft.js does in the editor. Redraft also exposes a helper to create the style renderer.
 ```js
-RawParser.parse(block)
-```
-Parses the provided block and returns an ContentNode object
+import React from 'react';
+import redraft, { createStylesRenderer } from 'redraft';
 
-```js
-renderNode(Object:node, Object:inlineRendrers, Object:entityRenderers, Object:entityMap, Object:options)
+const styleMap = {
+  BOLD: {
+    fontWeight: 'bold',
+  },
+  ITALIC: {
+    fontStyle: 'italic',
+  },
+  UNDERLINE: {
+    textDecoration: 'underline',
+  },
+};
+
+// This is a wrapper callback for the inline styles
+// the style object contains all the relevant styles from the styleMap
+// it needs a key as redraft returns arrays not Components
+const InlineWrapper = ({ children, style, key }) => <span key={key} style={style}>{children}</span>
+
+const renderers = {
+  style: createStylesRenderer(InlineWrapper, styleMap),
+  ...
+};
 ```
-Returns an rendered single block.
-- node - ContentNode from `RawParser.parse(block)` method
-- inlineRendrers, entityRenderers - callbacks
-- entityMap - the entityMap from raw state `raw.entityMap`
 
 ### Options
 - `cleanup` - cleans up blocks with no text or data (metadata or entities), by default cleanup only removes empty `unstyled` blocks inserted directly after `atomic`. Accepts false or an object containing cleanup settings:

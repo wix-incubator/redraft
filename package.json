@@ -1,6 +1,6 @@
 {
   "name": "redraft",
-  "version": "0.7.0",
+  "version": "0.8.0-beta.1",
   "description": "Renders the result of Draft.js convertToRaw using provided callbacks, works well with React",
   "main": "./lib/index.js",
   "scripts": {
@@ -37,6 +37,7 @@
     "linkify-it": "^2.0.3",
     "mocha": "^3.0.2",
     "rimraf": "^2.5.2",
-    "tlds": "^1.182.0"
+    "babel-preset-react": "^6.23.0",
+    "react-dom": "^15.4.2"
   }
 }
