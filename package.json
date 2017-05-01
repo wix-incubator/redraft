@@ -1,6 +1,6 @@
 {
   "name": "redraft",
-  "version": "0.8.0-beta.1",
+  "version": "0.8.0",
   "description": "Renders the result of Draft.js convertToRaw using provided callbacks, works well with React",
   "main": "./lib/index.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "babel-preset-react": "^6.23.0",
     "babel-register": "^6.16.3",
     "chai": "^3.5.0",
+    "draft-js": "^0.10.0",
     "eslint": "^3.7.1",
     "eslint-config-airbnb": "^11.2.0",
     "eslint-plugin-import": "^1.16.0",
