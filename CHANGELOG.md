@@ -1,3 +1,8 @@
+## 0.8.0
+- added decorator support (also added example in the README)
+- exposed a helper to crate a style renderer as an alternative to providing inline style renderers
+- fixed .npmignore (.babelrc #24 and exmample)
+
 ## 0.7.0
 - breaking change to block renderer API, depth is now passed along keys and data as second param
 - added proper surrogate pair handling for multibyte unicode characters #15

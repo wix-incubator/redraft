@@ -81,15 +81,16 @@ const renderers = {
     LINK: (children, data, { key }) => <Link key={key} to={data.url}>{children}/>,
   },
   /**
+   * Array of decorators,
    * Entities receive children and the entity data,
-   * based on https://facebook.github.io/draft-js/docs/advanced-topics-decorators.html
+   * inspired by https://facebook.github.io/draft-js/docs/advanced-topics-decorators.html
    */
   decorators: [
     {
-      // by default linkStrategy receives a ContentBlock stub
+      // by default linkStrategy receives a ContentBlock stub (more info under Creating the ContentBlock)
       strategy: linkStrategy,
-      // component is just a callback as with other renderers,
-      // decoratedText just the plain string matched by the strategy
+      // component - a callback as with other renderers
+      // decoratedText a plain string matched by the strategy
       component: ({ children, decoratedText }) => <a href={decoratedText}>{children}/>,
     }
   ],
@@ -143,6 +144,7 @@ If provided with a style renderer in the renders, redraft will use it instead of
 import React from 'react';
 import redraft, { createStylesRenderer } from 'redraft';
 
+
 const styleMap = {
   BOLD: {
     fontWeight: 'bold',
@@ -159,22 +161,39 @@ const styleMap = {
 // the style object contains all the relevant styles from the styleMap
 // it needs a key as redraft returns arrays not Components
 const InlineWrapper = ({ children, style, key }) => <span key={key} style={style}>{children}</span>
+// this Component results in a flatter output as it can have multiple styles (also possibly less semantic)
 
+// note the style key and createStylesRenderer helper
 const renderers = {
   style: createStylesRenderer(InlineWrapper, styleMap),
   ...
 };
 ```
 
-### Options
-- `cleanup` - cleans up blocks with no text or data (metadata or entities), by default cleanup only removes empty `unstyled` blocks inserted directly after `atomic`. Accepts false or an object containing cleanup settings:
+
+## Options
+### Cleanup
+`cleanup` - cleans up blocks with no text or data (metadata or entities), by default cleanup only removes empty `unstyled` blocks inserted directly after `atomic`. Accepts false or an object containing cleanup settings:
   - `after` - array of block types that are followed by cleanup checks, or `'all'` (default: `['atomic']`)
   - `types` - array of block types that are checked, or `'all'` (default: `['unstyled']`)
   - `except` - array of block types that are omitted during cleanup - passing this is same as setting types to `'all'` (default: `undefined`)
   - `trim` - boolean, should the block text be trimmed when checking if its empty (default: `false`)
   - `split` - boolean, splits groups after cleanup, works best when cleanup is enabled for and after all types - more info in the example (default: `true`)
-- `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
-- `createContentBlock` - by default when using decorators redraft creates a ContentBlock stub, its possible to pass a callback that returns a draft-js ContentBlock
+
+### Joining the output
+`joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
+
+### Creating the ContentBlock
+ `createContentBlock` - a function that receives a block and returns a draft-js ContentBlock, if not provided when using decorators redraft will create a ContentBlock stub with only some basic ContentBlock functionality
+
+*Exmaple usage with ContentBlock from draft-js*
+```js
+import { ContentBlock } from 'draft-js'
+
+const createContentBlock = block => new ContentBlock(block)
+
+```
+
 
 ## Changelog
 The changelog is available here [CHANGELOG](CHANGELOG.md)
