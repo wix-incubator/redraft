@@ -2,7 +2,7 @@ import chai from 'chai';
 import redraft, { createStylesRenderer } from '../src';
 import * as raws from './raws';
 import { joinRecursively, makeList } from './helpers';
-import ReactDOMServer from 'react-dom/server'
+import ReactDOMServer from 'react-dom/server';
 import React from 'react';
 
 const should = chai.should();

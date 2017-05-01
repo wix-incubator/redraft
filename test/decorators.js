@@ -1,5 +1,6 @@
 import chai from 'chai';
 import linkifyIt from 'linkify-it';
+import { ContentBlock } from 'draft-js';
 import tlds from 'tlds';
 import redraft from '../src';
 import { joinRecursively } from './helpers';
@@ -43,6 +44,19 @@ const rawWithLink = {
   }],
 };
 
+const rawWithLink2 = {
+  entityMap: {},
+  blocks: [{
+    key: '8ofc8',
+    text: 'Another raw with link: http://lokiuz.github.io/redraft/ and some extra text here.',
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [{ offset: 0, length: 7, style: 'BOLD' }],
+    entityRanges: [],
+    data: {},
+  }],
+};
+
 
 const inline = {
   BOLD: (children) => `<strong>${children.join('')}</strong>`,
@@ -67,6 +81,18 @@ const renderers = {
 describe('redraft with decorators', () => {
   it('should apply decorator ranges and call decorator component', () => {
     const rendered = redraft(rawWithLink, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len
+  });
+  it('match the decorator porperly', () => {
+    const rendered = redraft(rawWithLink2, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<strong>Another</strong> raw with link: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'); // eslint-disable-line max-len
+  });
+  it('should handle original ContentBlock', () => {
+    const rendered = redraft(rawWithLink, renderers, {
+      createContentBlock: block => new ContentBlock(block),
+    });
     const joined = joinRecursively(rendered);
     joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len
   });
