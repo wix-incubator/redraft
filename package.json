@@ -1,6 +1,6 @@
 {
   "name": "redraft",
-  "version": "0.7.0",
+  "version": "0.8.0-beta.1",
   "description": "Renders the result of Draft.js convertToRaw using provided callbacks, works well with React",
   "main": "./lib/index.js",
   "scripts": {
@@ -26,7 +26,8 @@
     "babel-core": "^6.7.2",
     "babel-eslint": "^7.0.0",
     "babel-plugin-array-includes": "^2.0.3",
-    "babel-preset-latest": "^6.16.0",
+    "babel-preset-env": "^1.2.1",
+    "babel-preset-react": "^6.23.0",
     "babel-register": "^6.16.3",
     "chai": "^3.5.0",
     "eslint": "^3.7.1",
@@ -34,7 +35,11 @@
     "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.4.1",
+    "linkify-it": "^2.0.3",
     "mocha": "^3.0.2",
-    "rimraf": "^2.5.2"
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "rimraf": "^2.5.2",
+    "tlds": "^1.183.0"
   }
 }

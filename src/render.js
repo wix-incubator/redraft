@@ -1,63 +1,31 @@
 import RawParser from './RawParser';
-import warn from './warn';
-import checkCleanup from './checkCleanup';
-
-const defaultOptions = {
-  joinOutput: false,
-  cleanup: {
-    after: ['atomic'],
-    types: ['unstyled'],
-    trim: false,
-    split: true,
-  },
-};
-
-/**
- * Concats or insets a string at given array index
- */
-const pushString = (string, array, index) => {
-  const tempArray = array;
-  if (!array[index]) {
-    tempArray[index] = string;
-  } else {
-    tempArray[index] += string;
-  }
-  return tempArray;
-};
-
-/**
- * Joins the input if the joinOutput option is enabled
- */
-const checkJoin = (input, options) => {
-  if (Array.isArray(input) && options.joinOutput) {
-    return input.join('');
-  }
-  return input;
-};
-
-// return a new generator wich produces sequential keys for nodes
-const getKeyGenerator = () => {
-  let key = 0;
-  const keyGenerator = () => {
-    const current = key;
-    key += 1;
-    return current; // eslint-disable-line no-plusplus
-  };
-  return keyGenerator;
-};
-
+import warn from './helpers/warn';
+import checkCleanup from './helpers/checkCleanup';
+import getKeyGenerator from './helpers/getKeyGenerator';
+import checkJoin from './helpers/checkJoin';
+import pushString from './helpers/pushString';
+import defaultOptions from './defaultOptions';
+import withDecorators from './withDecorators';
 
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
 export const renderNode = (
   node,
-  styleRenderers,
+  inlineRenderers,
   entityRenderers,
+  styleRenderers,
   entityMap,
   options,
   keyGenerator
 ) => {
+  if (node.styles && styleRenderers) {
+    return styleRenderers(
+      checkJoin(node.content, options),
+      node.styles,
+      { key: keyGenerator() }
+    );
+  }
   let children = [];
   let index = 0;
   node.content.forEach((part) => {
@@ -67,8 +35,9 @@ export const renderNode = (
       index += 1;
       children[index] = renderNode(
         part,
-        styleRenderers,
+        inlineRenderers,
         entityRenderers,
+        styleRenderers,
         entityMap,
         options,
         keyGenerator
@@ -76,8 +45,8 @@ export const renderNode = (
       index += 1;
     }
   });
-  if (node.style && styleRenderers[node.style]) {
-    return styleRenderers[node.style](
+  if (node.style && inlineRenderers[node.style]) {
+    return inlineRenderers[node.style](
       checkJoin(children, options),
       { key: keyGenerator() }
     );
@@ -91,6 +60,12 @@ export const renderNode = (
         { key: node.entity }
       );
     }
+  }
+  if (node.decorator !== null) {
+    return node.decorator({
+      children: checkJoin(children, options),
+      decoratedText: node.decoratedText,
+    });
   }
   return children;
 };
@@ -163,7 +138,7 @@ const renderGroup = (group, blockRenderers, rendered, params) => {
  * Renders blocks grouped by type using provided blockStyleRenderers
  */
 const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
-                      entityRenderers = {}, entityMap = {}, userOptions = {}) => {
+                      entityRenderers = {}, stylesRenderer, entityMap = {}, userOptions = {}) => {
   // initialize
   const options = Object.assign({}, defaultOptions, userOptions);
   const rendered = [];
@@ -173,8 +148,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   let prevKeys = [];
   let prevData = [];
   let splitGroup = false;
-  const Parser = new RawParser();
-
+  const Parser = new RawParser({ flat: !!stylesRenderer });
   blocks.forEach((block) => {
     if (checkCleanup(block, prevType, options)) {
       // Set the split flag if enabled
@@ -188,6 +162,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
       node,
       inlineRenderers,
       entityRenderers,
+      stylesRenderer,
       entityMap,
       options,
       getKeyGenerator()
@@ -211,7 +186,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
     // handle children
     if (block.children) {
       const children = renderBlocks(block.children, inlineRenderers,
-      blockRenderers, entityRenderers, entityMap, options);
+      blockRenderers, entityRenderers, stylesRenderer, entityMap, options);
       renderedNode.push(children);
     }
     // push current node to group
@@ -233,6 +208,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   return checkJoin(rendered, options);
 };
 
+
 /**
  * Converts and renders each block of Draft.js rawState
  */
@@ -245,14 +221,25 @@ export const render = (raw, renderers = {}, options = {}) => {
   if (!raw.blocks.length) {
     return null;
   }
-  const { inline: inlineRenderers, blocks: blockRenderers, entities: entityRenderers } = renderers;
-
-  const blocks = byDepth(raw.blocks);
+  const {
+    inline: inlineRenderers,
+    blocks: blockRenderers,
+    entities: entityRenderers,
+    styles: stylesRenderer,
+    decorators,
+  } = renderers;
+  // If decorators are present, they are maped with the blocks array
+  const blocksWithDecorators = decorators
+    ? withDecorators(raw.blocks, decorators, options)
+    : raw.blocks;
+  // Nest blocks by depth
+  const blocks = byDepth(blocksWithDecorators);
   return renderBlocks(
     blocks,
     inlineRenderers,
     blockRenderers,
     entityRenderers,
+    stylesRenderer,
     raw.entityMap,
     options
   );

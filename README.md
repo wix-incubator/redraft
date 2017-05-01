@@ -80,6 +80,19 @@ const renderers = {
     // key is the entity key value from raw
     LINK: (children, data, { key }) => <Link key={key} to={data.url}>{children}/>,
   },
+  /**
+   * Entities receive children and the entity data,
+   * based on https://facebook.github.io/draft-js/docs/advanced-topics-decorators.html
+   */
+  decorators: [
+    {
+      // by default linkStrategy receives a ContentBlock stub
+      strategy: linkStrategy,
+      // component is just a callback as with other renderers,
+      // decoratedText just the plain string matched by the strategy
+      component: ({ children, decoratedText }) => <a href={decoratedText}>{children}/>,
+    }
+  ],
 }
 
 ```
@@ -120,22 +133,38 @@ export default class Renderer extends Component {
 redraft(Object:raw, Object:renderers, Object:options)
 ```
 Returns an array of rendered blocks.
-- raw - result of the Draft.js convertToRaw
-- renderers - object with 3 groups of renders inline, blocks and entities refer to example for more info
-- options - optional settings
+- **raw** - result of the Draft.js convertToRaw
+- **renderers** - object with 3 groups of renders inline (or style), blocks and entities refer to example for more info
+- **options** - optional settings
 
+#### Using style renderer instead of inline
+If provided with a style renderer in the renders, redraft will use it instead of the inline one. This allows a flatter render more like draft.js does in the editor. Redraft also exposes a helper to create the style renderer.
 ```js
-RawParser.parse(block)
-```
-Parses the provided block and returns an ContentNode object
+import React from 'react';
+import redraft, { createStylesRenderer } from 'redraft';
 
-```js
-renderNode(Object:node, Object:inlineRendrers, Object:entityRenderers, Object:entityMap, Object:options)
+const styleMap = {
+  BOLD: {
+    fontWeight: 'bold',
+  },
+  ITALIC: {
+    fontStyle: 'italic',
+  },
+  UNDERLINE: {
+    textDecoration: 'underline',
+  },
+};
+
+// This is a wrapper callback for the inline styles
+// the style object contains all the relevant styles from the styleMap
+// it needs a key as redraft returns arrays not Components
+const InlineWrapper = ({ children, style, key }) => <span key={key} style={style}>{children}</span>
+
+const renderers = {
+  style: createStylesRenderer(InlineWrapper, styleMap),
+  ...
+};
 ```
-Returns an rendered single block.
-- node - ContentNode from `RawParser.parse(block)` method
-- inlineRendrers, entityRenderers - callbacks
-- entityMap - the entityMap from raw state `raw.entityMap`
 
 ### Options
 - `cleanup` - cleans up blocks with no text or data (metadata or entities), by default cleanup only removes empty `unstyled` blocks inserted directly after `atomic`. Accepts false or an object containing cleanup settings:
@@ -145,6 +174,7 @@ Returns an rendered single block.
   - `trim` - boolean, should the block text be trimmed when checking if its empty (default: `false`)
   - `split` - boolean, splits groups after cleanup, works best when cleanup is enabled for and after all types - more info in the example (default: `true`)
 - `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
+- `createContentBlock` - by default when using decorators redraft creates a ContentBlock stub, its possible to pass a callback that returns a draft-js ContentBlock
 
 ## Changelog
 The changelog is available here [CHANGELOG](CHANGELOG.md)
