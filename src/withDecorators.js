@@ -9,8 +9,10 @@ const populateDecoratorRanges = (array, component) => (start, end) => array.push
  */
 const decorateBlock = (block, decorators, { createContentBlock }) => {
   const decoratorRanges = [];
+  // create ContentBlock or a stub
+  const contentBlock = createContentBlock ? createContentBlock(block) : stubContentBlock(block);
   decorators.map(({ strategy, component }) => strategy(
-    createContentBlock ? createContentBlock(block) : stubContentBlock(block),
+    contentBlock,
     populateDecoratorRanges(decoratorRanges, component)
   ));
   return Object.assign({}, block, { decoratorRanges });
