@@ -88,6 +88,7 @@ const renderers = {
   decorators: [
     {
       // by default linkStrategy receives a ContentBlock stub (more info under Creating the ContentBlock)
+      // strategy only receives first two arguments, contentState is yet not provided
       strategy: linkStrategy,
       // component - a callback as with other renderers
       // decoratedText a plain string matched by the strategy
