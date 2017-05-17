@@ -166,7 +166,7 @@ const InlineWrapper = ({ children, style, key }) => <span key={key} style={style
 
 // note the style key and createStylesRenderer helper
 const renderers = {
-  style: createStylesRenderer(InlineWrapper, styleMap),
+  styles: createStylesRenderer(InlineWrapper, styleMap),
   ...
 };
 ```
