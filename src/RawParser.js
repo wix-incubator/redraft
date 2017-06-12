@@ -1,9 +1,9 @@
+import punycode from 'punycode';
 import ContentNode from './ContentNode';
-
 /**
  * Slices the decoded ucs2 array and encodes the result back to a string representation
  */
-const getString = (array, from, to) => array.slice(from, to).join('');
+const getString = (array, from, to) => punycode.ucs2.encode(array.slice(from, to));
 
 
 /**
@@ -128,7 +128,7 @@ export default class RawParser {
   parse({ text, inlineStyleRanges: ranges, entityRanges, decoratorRanges = [] }) {
     // Some unicode charactes actualy have length of more than 1
     // this creates an array of code points using es6 string iterator
-    this.textArray = Array.from(text);
+    this.textArray = punycode.ucs2.decode(text);
     this.ranges = ranges;
     this.iterator = 0;
     // get all the relevant indexes for whole block
