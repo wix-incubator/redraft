@@ -8,25 +8,74 @@ const runes = require('runes');
 const punycode = require('punycode');
 const chalk = require('chalk');
 
-// Declare our test string (each has same lenght)
-const emojiString =
-  'Emoji inbound!!!💙💙💙💙💙x💙💙💙💙💙x💙💙💙💙💙x💙💙💙💙💙';
-const plainString = 'No emoji inbound!!!!!x!!!!!x!!!!!x!!!!!';
-const minimalEmoji = 'No emoji inbound!!!!!💙!!!!!💙!!!!!💙!!!!!';
+// 20 chars
+const chars = [
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  '#',
+  '1',
+  '2',
+  '3',
+  '?',
+  '!',
+  '@',
+  ' ',
+];
 
-// Number of runs
-const times = range(0, 10000);
+// 10 emojis
+const emojis = [
+  '💙',
+  '😺',
+  '🎉',
+  '💣',
+  '✔️',
+  '💯',
+  '⚛️',
+  '💩',
+  '🚀',
+  '🍵',
+];
 
-// This will run a cb number of specified times and return the time diff
+// Generate a random constant lenght string from a given charcter pool
+const makeString = (length, pool) => {
+  let string = '';
+  for (let i = 0; i < length; i++) {
+    const index = Math.floor(Math.random() * 10000) % pool.length;
+    string += pool[index];
+  }
+  return string;
+};
+
+// Get input array with random strings
+const getInput = pool => {
+  const times = range(0, 10000);
+  const strings = [];
+  forEach(times, () => {
+    strings.push(makeString(50, pool));
+  });
+  return strings;
+};
+
+// Run a cb on each string from input array and return the time diff
 const emojiBench = ({ cb, input, label }) => {
   const arr = [];
   const start = now();
-  forEach(times, (i) => {
-    arr.push(cb(input));
+  forEach(input, (string) => {
+    arr.push(cb(string));
   });
-  const diff = now() - start;
-  console.log(`[${chalk.yellow(label)}]: ${diff}`);
-  return diff;
+  const time = now() - start;
+  console.log(`[${chalk.yellow(label)}]: ${time}`);
+  return time;
 };
 
 // Define tested methods
@@ -49,16 +98,28 @@ const tests = [
 
 // Executes a single batch of tests, and adds some colors :)
 const batch = (input, label) => {
-  console.log(`\nRunning: ${chalk.green(label)} with ${chalk.yellow(input)}`);
+  console.log(`\nRunning: ${chalk.green(label)}`);
   const results = tests.map(test =>
     emojiBench(Object.assign({}, test, { input }))
   );
   const winner = min(results);
-  console.log(`Best time ${chalk.green(winner)} - ${tests[results.indexOf(winner)].label}`);
+  console.log(
+    `Best time ${chalk.green(winner)} - ${tests[results.indexOf(winner)].label}`
+  );
 };
 
-console.log(`--- Emoji benchmark running on ${chalk.bold.yellow(process.title)} ${chalk.bold.green(process.version)} ---`);
+// Run test benchmark
+console.log(
+  `--- Emoji benchmark running on ${chalk.bold.yellow(process.title)} ${chalk.bold.green(process.version)} ---`
+);
 
-batch(emojiString, 'String with emojis');
-batch(plainString, 'Plain string');
-batch(minimalEmoji, 'Minimal emoji string');
+// 0 - 10
+batch(getInput(emojis), 'Random strings with 100% emojis');
+// 10 - 10
+batch(getInput([...chars.slice(0, 10), ...emojis]), 'Random strings with 1/2 emojis');
+// 20 - 10
+batch(getInput([...chars, ...emojis]), 'Random strings with 1/3 emojis');
+// 40 - 10
+batch(getInput([...chars, ...emojis, ...chars]), 'Random strings with 1/5 emojis');
+// 40 - 10
+batch(getInput(chars), 'Random strings with no emojis');
