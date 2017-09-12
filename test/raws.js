@@ -24,6 +24,16 @@ export const raw = {
         length: 21,
         style: 'ITALIC',
       },
+      {
+        offset: 11,
+        length: 6,
+        style: 'UNDERLINE',
+      },
+      {
+        offset: 11,
+        length: 6,
+        style: 'STRIKETHROUGH',
+      },
     ],
     entityRanges: [
       {
