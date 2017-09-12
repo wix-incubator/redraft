@@ -1,9 +1,19 @@
+import _assignWith from 'lodash.assignwith';
+
 /**
  * Returns a single style object provided styleArray and stylesMap
  */
 const reduceStyles = (styleArray, stylesMap) => styleArray
   .map(style => stylesMap[style])
-  .reduce((prev, next) => Object.assign({}, prev, next), {});
+  .reduce((prev, next) => _assignWith(prev, next, (objValue, srcValue) => {
+    // key conflict, assign the concatenated value to the key
+    if (objValue && srcValue) {
+      return objValue.concat(' ', srcValue);
+    }
+    // assign value
+    return undefined;
+  }), {}
+);
 
 /**
  * Returns a styleRenderer from a customStyleMap and a wrapper callback (Component)
