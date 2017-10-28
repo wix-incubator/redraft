@@ -62,10 +62,10 @@ export const renderNode = (
     }
   }
   if (node.decorator !== null) {
-    return node.decorator({
+    return node.decorator(Object.assign({
       children: checkJoin(children, options),
       decoratedText: node.decoratedText,
-    });
+    }, node.decoratorProps));
   }
   return children;
 };
@@ -229,7 +229,7 @@ export const render = (raw, renderers = {}, options = {}) => {
     decorators,
   } = renderers;
   // If decorators are present, they are maped with the blocks array
-  const blocksWithDecorators = decorators
+  const blocksWithDecorators = decorators || options.Decorator
     ? withDecorators(raw.blocks, decorators, options)
     : raw.blocks;
   // Nest blocks by depth

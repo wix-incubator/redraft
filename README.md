@@ -84,6 +84,7 @@ const renderers = {
    * Array of decorators,
    * Entities receive children and the entity data,
    * inspired by https://facebook.github.io/draft-js/docs/advanced-topics-decorators.html
+   * it's also possible to pass a Decorator class to options instead (or additionaly)
    */
   decorators: [
     {
@@ -183,6 +184,9 @@ const renderers = {
 
 ### Joining the output
 `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
+
+### Using custom Decorator class
+`Decorator` - use this to pass a custom Decorator class that matches the [DraftDecoratorType](https://github.com/facebook/draft-js/blob/master/src/model/decorators/DraftDecoratorType.js).
 
 ### Creating the ContentBlock
  `createContentBlock` - a function that receives a block and returns a draft-js ContentBlock, if not provided when using decorators redraft will create a ContentBlock stub with only some basic ContentBlock functionality

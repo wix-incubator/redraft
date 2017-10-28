@@ -28,6 +28,7 @@ function createNodes(entityRanges, decoratorRanges = [], textArray) {
     nodes.push(new ContentNode({
       entity: range.key,
       decorator: range.component,
+      decoratorProps: range.decoratorProps,
       decoratedText: range.component
         ? getString(textArray, range.offset, range.offset + range.length)
         : undefined,

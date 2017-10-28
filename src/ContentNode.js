@@ -8,6 +8,7 @@ class ContentNode {
     this.end = typeof props.end !== 'undefined' ? props.end : null;
     this.entity = typeof props.entity !== 'undefined' ? props.entity : null;
     this.decorator = typeof props.decorator !== 'undefined' ? props.decorator : null;
+    this.decoratorProps = props.decoratorProps || null;
     this.decoratedText = typeof props.decoratedText !== 'undefined' ? props.decoratedText : null;
     this.style = props.style || null;
     this.styles = props.styles || null;
@@ -34,7 +35,7 @@ class ContentNode {
   }
 
   pushContent(string, stack = [], flat = false) {
-    // we can just concat strings in case when both the pushed item
+    // we can just concat strings when both the pushed item
     // and the last element of the content array is a string
     if (!stack || stack.length < 1) {
       if (typeof string === 'string' && typeof this.getCurrentContent() === 'string') {
@@ -44,7 +45,7 @@ class ContentNode {
       }
       return this;
     }
-    // hnadle flat structure
+    // handle flat structure
     if (flat) {
       this.handleFlatPush(string, stack);
       return this;
