@@ -12,6 +12,7 @@ class ContentNode {
     this.decoratedText = typeof props.decoratedText !== 'undefined' ? props.decoratedText : null;
     this.style = props.style || null;
     this.styles = props.styles || null;
+    this.block = props.block || {};
   }
 
   getCurrentContent() {

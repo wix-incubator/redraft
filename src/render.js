@@ -7,6 +7,8 @@ import pushString from './helpers/pushString';
 import defaultOptions from './defaultOptions';
 import withDecorators from './withDecorators';
 
+const KEY_DELIMITER = '.';
+
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
@@ -62,9 +64,14 @@ export const renderNode = (
     }
   }
   if (node.decorator !== null) {
+    // FIXME: few props are missing see https://github.com/facebook/draft-js/blob/0c609d9d3671fdbbe2a290ed160a0537f846f08e/src/component/contents/DraftEditorBlock.react.js#L196-L205
+    const decoratorOffsetKey = [node.block.key, node.start, 0].join(KEY_DELIMITER);
     return node.decorator(Object.assign({
       children: checkJoin(children, options),
       decoratedText: node.decoratedText,
+      entityKey: node.entity,
+      offsetKey: decoratorOffsetKey,
+      key: decoratorOffsetKey,
     }, node.decoratorProps));
   }
   return children;
