@@ -1,4 +1,4 @@
-import { CompositeDecorator } from 'draft-js';
+import CompositeDecorator from './helpers/CompositeDecorator';
 import stubContentBlock from './helpers/stubContentBlock';
 
 /**

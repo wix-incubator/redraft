@@ -21,10 +21,8 @@
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "draft-js": "^0.10.4"
-  },
   "devDependencies": {
+    "draft-js": "^0.10.4",
     "babel-cli": "^6.6.5",
     "babel-core": "^6.7.2",
     "babel-eslint": "^7.0.0",
