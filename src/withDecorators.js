@@ -10,19 +10,18 @@ import stubContentBlock from './helpers/stubContentBlock';
 const decorateBlock = (
   block,
   decorators,
+  contentState,
   { createContentBlock, Decorator = CompositeDecorator }
 ) => {
   const decoratorRanges = [];
   // create a Decorator instance
   const decorator = new Decorator(decorators);
   // create ContentBlock or a stub
-  // FIXME: if draf-js is a dependency its possible to just use the built in ContentBlock
   const contentBlock = createContentBlock
     ? createContentBlock(block)
     : stubContentBlock(block);
   // Get decorations from CompositeDecorator instance
-  // FIXME: missing contentState for the second argument
-  const decorations = decorator.getDecorations(contentBlock, {}).toArray();
+  const decorations = decorator.getDecorations(contentBlock, contentState).toArray();
   // Keep track of offset for current key
   let offset = 0;
   decorations.forEach((key, index) => {
@@ -32,24 +31,32 @@ const decorateBlock = (
       return;
     }
     // get next key
-    const next = decorations[index + 1];
+    const nextIndex = index + 1;
+    const next = decorations[nextIndex];
     // if thers no next key or the key chages build a decoratorRange entry
     if (!next || next !== key) {
       decoratorRanges.push({
         offset,
-        length: (index - offset) + 1,
+        length: nextIndex - offset,
         component: decorator.getComponentForKey(key),
         decoratorProps: decorator.getPropsForKey(key) || {},
+        // save reference to contentState
+        contentState,
       });
       // reset the offset to next index
-      offset = index + 1;
+      offset = nextIndex;
     }
   });
   // merge the block with decoratorRanges
   return Object.assign({}, block, { decoratorRanges });
 };
 
-const withDecorators = (blocks, decorators, options) =>
-  blocks.map(block => decorateBlock(block, decorators, options || {}));
+const withDecorators = (raw, decorators, options) => {
+  const contentState = options.convertFromRaw
+  && options.convertFromRaw(raw);
+  return raw.blocks.map(block =>
+    decorateBlock(block, decorators, contentState, options || {})
+  );
+};
 
 export default withDecorators;

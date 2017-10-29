@@ -2,8 +2,17 @@
  * This is only slighly modified version of draft-js CompositeDraftDecorator
  * https://github.com/facebook/draft-js/blob/dc27624caaaede4dad9d182ff9918a5da8f83c99/src/model/decorators/CompositeDraftDecorator.js
  *
- * Striped the use of Immutable.js List and flow annotations(for now)
+ * Basicly it just swaps the Immutable.js List with own ListStub
+ *
+ * @flow
  */
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type ContentBlock from 'draft-js/lib/ContentBlock';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type ContentState from 'draft-js/lib/ContentState';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type { DraftDecorator } from 'draft-js/lib/DraftDecorator';
 
 const DELIMITER = '.';
 
@@ -11,7 +20,11 @@ const DELIMITER = '.';
  * Determine whether we can occupy the specified slice of the decorations
  * array.
  */
-const canOccupySlice = (decorations, start, end) => {
+function canOccupySlice(
+  decorations: Array<?string>,
+  start: number,
+  end: number
+): boolean {
   // eslint-disable-next-line no-plusplus
   for (let ii = start; ii < end; ii++) {
     if (decorations[ii] != null) {
@@ -19,24 +32,33 @@ const canOccupySlice = (decorations, start, end) => {
     }
   }
   return true;
-};
+}
 
 /**
  * Splice the specified component into our decoration array at the desired
  * range.
  */
-const occupySlice = (targetArr, start, end, componentKey) => {
+function occupySlice(
+  targetArr: Array<?string>,
+  start: number,
+  end: number,
+  componentKey: string
+): void {
   // eslint-disable-next-line no-plusplus
   for (let ii = start; ii < end; ii++) {
     // eslint-disable-next-line no-param-reassign
     targetArr[ii] = componentKey;
   }
+}
+
+type ListStub = {
+  toArray: () => Array<?string>
 };
 
 /**
  * Stub an immutable List with toArray method
  */
-const listStub = array => ({
+const listStub = (array: Array<?string>): ListStub => ({
   toArray: () => array,
 });
 
@@ -60,14 +82,16 @@ const listStub = array => ({
  * preserved and the new match is discarded.
  */
 class CompositeDraftDecorator {
-  constructor(decorators) {
+  decorators: Array<DraftDecorator>;
+
+  constructor(decorators: Array<DraftDecorator>) {
     // Copy the decorator array, since we use this array order to determine
     // precedence of decoration matching. If the array is mutated externally,
     // we don't want to be affected here.
     this.decorators = decorators.slice();
   }
 
-  getDecorations(block, contentState) {
+  getDecorations(block: ContentBlock, contentState: ContentState): ListStub {
     const decorations = Array(block.getText().length).fill(null);
 
     this.decorators.forEach((/* object*/ decorator, /* number*/ ii) => {
@@ -89,12 +113,12 @@ class CompositeDraftDecorator {
     return listStub(decorations);
   }
 
-  getComponentForKey(key): Function {
+  getComponentForKey(key: string): Function {
     const componentKey = parseInt(key.split(DELIMITER)[0], 10);
     return this.decorators[componentKey].component;
   }
 
-  getPropsForKey(key): ?Object {
+  getPropsForKey(key: string): ?Object {
     const componentKey = parseInt(key.split(DELIMITER)[0], 10);
     return this.decorators[componentKey].props;
   }

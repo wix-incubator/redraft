@@ -10,6 +10,7 @@ class ContentNode {
     this.decorator = typeof props.decorator !== 'undefined' ? props.decorator : null;
     this.decoratorProps = props.decoratorProps || null;
     this.decoratedText = typeof props.decoratedText !== 'undefined' ? props.decoratedText : null;
+    this.contentState = props.contentState;
     this.style = props.style || null;
     this.styles = props.styles || null;
     this.block = props.block || {};

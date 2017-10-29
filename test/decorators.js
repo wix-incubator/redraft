@@ -1,9 +1,11 @@
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import linkifyIt from 'linkify-it';
-import { ContentBlock } from 'draft-js';
+import { ContentBlock, convertFromRaw } from 'draft-js';
 import tlds from 'tlds';
 import redraft from '../src';
 import { joinRecursively } from './helpers';
+
+chai.should();
 
 const linkify = linkifyIt();
 linkify.tlds(tlds);
@@ -19,6 +21,10 @@ const linkStrategy = (contentBlock, callback) => {
 
 
 const link = ({ decoratedText, children }) => `<a href="${decoratedText}" >${joinRecursively(children)}</a>`;
+const linkWithContentState = ({ decoratedText, children, contentState }) => {
+  expect(contentState).to.be.an('object');
+  return `<a href="${decoratedText}" >${joinRecursively(children)}</a>`;
+};
 
 
 const decorators = [
@@ -28,8 +34,12 @@ const decorators = [
   },
 ];
 
-
-chai.should();
+const decoratorsContentState = [
+  {
+    strategy: linkStrategy,
+    component: linkWithContentState,
+  },
+];
 
 const rawWithLink = {
   entityMap: {},
@@ -78,6 +88,13 @@ const renderers = {
   decorators,
 };
 
+const renderersWithContentState = {
+  inline,
+  blocks,
+  entities,
+  decorators: decoratorsContentState,
+};
+
 describe('redraft with decorators', () => {
   it('should apply decorator ranges and call decorator component', () => {
     const rendered = redraft(rawWithLink, renderers);
@@ -92,6 +109,13 @@ describe('redraft with decorators', () => {
   it('should handle original ContentBlock', () => {
     const rendered = redraft(rawWithLink, renderers, {
       createContentBlock: block => new ContentBlock(block),
+    });
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len
+  });
+  it('should handle convertFromRawToDraftState in options', () => {
+    const rendered = redraft(rawWithLink, renderersWithContentState, {
+      convertFromRaw,
     });
     const joined = joinRecursively(rendered);
     joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len

@@ -35,6 +35,7 @@ function createNodes(entityRanges, decoratorRanges = [], textArray, block) {
         : undefined,
       start: range.offset,
       end: range.offset + range.length,
+      contentState: range.contentState,
     }));
     lastIndex = range.offset + range.length;
   });
