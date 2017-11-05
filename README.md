@@ -84,6 +84,7 @@ const renderers = {
    * Array of decorators,
    * Entities receive children and the entity data,
    * inspired by https://facebook.github.io/draft-js/docs/advanced-topics-decorators.html
+   * it's also possible to pass a Decorator class to options instead (or additionaly)
    */
   decorators: [
     {
@@ -92,6 +93,7 @@ const renderers = {
       strategy: linkStrategy,
       // component - a callback as with other renderers
       // decoratedText a plain string matched by the strategy
+      // if your decorator depends on draft-js contentState you need to provide convertFromRaw in redraft options
       component: ({ children, decoratedText }) => <a href={decoratedText}>{children}/>,
     }
   ],
@@ -183,6 +185,12 @@ const renderers = {
 
 ### Joining the output
 `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
+
+### Using custom Decorator class
+`Decorator` - use this to pass a custom Decorator class that matches the [DraftDecoratorType](https://github.com/facebook/draft-js/blob/master/src/model/decorators/DraftDecoratorType.js).
+
+### Accessing contentState
+`convertFromRaw` - pass the draft-js convertFromRaw to provide the contentState object to both the components in your decorators and the custom Decorator class getDecorations method.
 
 ### Creating the ContentBlock
  `createContentBlock` - a function that receives a block and returns a draft-js ContentBlock, if not provided when using decorators redraft will create a ContentBlock stub with only some basic ContentBlock functionality
