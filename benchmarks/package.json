@@ -1,0 +1,23 @@
+{
+  "name": "redraft-benchmarks",
+  "version": "0.8.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "emoji": "node emoji.js"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lokiuz/redraft.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "lodash": "^4.17.4",
+    "performance-now": "^2.1.0",
+    "punycode": "^2.1.0",
+    "runes": "^0.4.0"
+  }
+}

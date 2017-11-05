@@ -1,38 +1,41 @@
+import punycode from 'punycode';
 import ContentNode from './ContentNode';
-
 /**
  * Slices the decoded ucs2 array and encodes the result back to a string representation
  */
-const getString = (array, from, to) => array.slice(from, to).join('');
+const getString = (array, from, to) => punycode.ucs2.encode(array.slice(from, to));
 
 
 /**
  * creates nodes with entity keys and the endOffset
  */
-function createNodes(entityRanges, decoratorRanges = [], textArray) {
+function createNodes(entityRanges, decoratorRanges = [], textArray, block) {
   let lastIndex = 0;
   const mergedRanges = [...entityRanges, ...decoratorRanges].sort((a, b) => a.offset - b.offset);
   const nodes = [];
   // if thers no entities will return just a single item
   if (mergedRanges.length < 1) {
-    nodes.push(new ContentNode({ start: 0, end: textArray.length }));
+    nodes.push(new ContentNode({ block, start: 0, end: textArray.length }));
     return nodes;
   }
 
   mergedRanges.forEach((range) => {
     // create an empty node for content between previous and this entity
     if (range.offset > lastIndex) {
-      nodes.push(new ContentNode({ start: lastIndex, end: range.offset }));
+      nodes.push(new ContentNode({ block, start: lastIndex, end: range.offset }));
     }
     // push the node for the entity
     nodes.push(new ContentNode({
+      block,
       entity: range.key,
       decorator: range.component,
+      decoratorProps: range.decoratorProps,
       decoratedText: range.component
         ? getString(textArray, range.offset, range.offset + range.length)
         : undefined,
       start: range.offset,
       end: range.offset + range.length,
+      contentState: range.contentState,
     }));
     lastIndex = range.offset + range.length;
   });
@@ -40,6 +43,7 @@ function createNodes(entityRanges, decoratorRanges = [], textArray) {
   // finaly add a node for the remaining text if any
   if (lastIndex < textArray.length) {
     nodes.push(new ContentNode({
+      block,
       start: lastIndex,
       end: textArray.length,
     }));
@@ -125,20 +129,21 @@ export default class RawParser {
    * while it returns an object not a string
    * the idea is still mostly same as backdraft.js (https://github.com/evanc/backdraft-js)
    */
-  parse({ text, inlineStyleRanges: ranges, entityRanges, decoratorRanges = [] }) {
+  parse(block) {
+    const { text, inlineStyleRanges: ranges, entityRanges, decoratorRanges = [] } = block;
     // Some unicode charactes actualy have length of more than 1
     // this creates an array of code points using es6 string iterator
-    this.textArray = Array.from(text);
+    this.textArray = punycode.ucs2.decode(text);
     this.ranges = ranges;
     this.iterator = 0;
     // get all the relevant indexes for whole block
     this.relevantIndexes = getRelevantIndexes(text, ranges, entityRanges, decoratorRanges);
     // create entity or empty nodes to place the inline styles in
-    const nodes = createNodes(entityRanges, decoratorRanges, this.textArray);
+    const nodes = createNodes(entityRanges, decoratorRanges, this.textArray, block);
     const parsedNodes = nodes.map(node =>
       this.nodeIterator(node, node.start, node.end)
     );
-    return new ContentNode({ content: parsedNodes });
+    return new ContentNode({ block, content: parsedNodes });
   }
 
 }

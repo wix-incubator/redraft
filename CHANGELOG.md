@@ -1,3 +1,8 @@
+## 0.9.0
+- added support for custom Decorator class and accessing contentState #30
+- fixed inline style key collision #29
+- fix unicode-aware string splitting #27
+
 ## 0.8.0
 - added decorator support (also added example in the README)
 - exposed a helper to crate a style renderer as an alternative to providing inline style renderers

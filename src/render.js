@@ -7,6 +7,8 @@ import pushString from './helpers/pushString';
 import defaultOptions from './defaultOptions';
 import withDecorators from './withDecorators';
 
+const KEY_DELIMITER = '.';
+
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
@@ -62,10 +64,16 @@ export const renderNode = (
     }
   }
   if (node.decorator !== null) {
-    return node.decorator({
+    // FIXME: few props are missing see https://github.com/facebook/draft-js/blob/0c609d9d3671fdbbe2a290ed160a0537f846f08e/src/component/contents/DraftEditorBlock.react.js#L196-L205
+    const decoratorOffsetKey = [node.block.key, node.start, 0].join(KEY_DELIMITER);
+    return node.decorator(Object.assign({
       children: checkJoin(children, options),
       decoratedText: node.decoratedText,
-    });
+      contentState: node.contentState,
+      entityKey: node.entity,
+      offsetKey: decoratorOffsetKey,
+      key: decoratorOffsetKey,
+    }, node.decoratorProps));
   }
   return children;
 };
@@ -229,8 +237,8 @@ export const render = (raw, renderers = {}, options = {}) => {
     decorators,
   } = renderers;
   // If decorators are present, they are maped with the blocks array
-  const blocksWithDecorators = decorators
-    ? withDecorators(raw.blocks, decorators, options)
+  const blocksWithDecorators = decorators || options.Decorator
+    ? withDecorators(raw, decorators, options)
     : raw.blocks;
   // Nest blocks by depth
   const blocks = byDepth(blocksWithDecorators);
