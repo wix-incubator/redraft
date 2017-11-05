@@ -17,6 +17,9 @@ const customStyleMap = {
   UNDERLINE: {
     'text-decoration': 'underline',
   },
+  STRIKETHROUGH: {
+    'text-decoration': 'line-through',
+  },
 };
 
 const customStyleMapReact = {
@@ -28,6 +31,9 @@ const customStyleMapReact = {
   },
   UNDERLINE: {
     textDecoration: 'underline',
+  },
+  STRIKETHROUGH: {
+    textDecoration: 'line-through',
   },
 };
 
@@ -86,8 +92,9 @@ const renderersReact = {
 // Helpers for te
 const bold = 'font-weight:bold;';
 const italic = 'font-style:italic;';
+const textDecoration = 'text-decoration:underline line-through;';
 
-const corretRender = `<p><span style="${bold}">Lorem </span><a href="http://zombo.com/"><span style="${bold}${italic}">ipsum</span></a><span style="${bold}${italic}"> dolor</span><span style="${italic}"> sit amet,</span> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <span style="${italic}">ceteros invenire </span>tractatos his id. </blockquote><p><span style="${bold}">Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</span></p>` // eslint-disable-line max-len
+const corretRender = `<p><span style="${bold}">Lorem </span><a href="http://zombo.com/"><span style="${bold}${italic}">ipsum</span></a><span style="${bold}${italic}${textDecoration}"> dolor</span><span style="${italic}"> sit amet,</span> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <span style="${italic}">ceteros invenire </span>tractatos his id. </blockquote><p><span style="${bold}">Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</span></p>` // eslint-disable-line max-len
 
 
 describe('redraft with flat styles', () => {
