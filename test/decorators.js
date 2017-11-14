@@ -109,6 +109,13 @@ const renderersWithContentState = {
   decorators: decoratorsContentState,
 };
 
+const renderersWithTestDecorator = {
+  inline,
+  blocks,
+  entities,
+  decorators: [new TestDecorator()],
+};
+
 
 describe('redraft with decorators', () => {
   it('should apply decorator ranges and call decorator component', () => {
@@ -135,17 +142,13 @@ describe('redraft with decorators', () => {
     const joined = joinRecursively(rendered);
     joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len
   });
-  it('should handle Decorator in options', () => {
-    const rendered = redraft(rawWithLink, renderers, {
-      Decorator: TestDecorator,
-    });
+  it('should handle custom Decorator in decorators array', () => {
+    const rendered = redraft(rawWithLink, renderersWithTestDecorator);
     const joined = joinRecursively(rendered);
     joined.should.equal(`<span style="first first-${rawWithLink.blocks[0].key}" >h</span>ttp://lokiuz.<strong>github</strong>.io/redraft/`); // eslint-disable-line max-len
   });
-  it('should handle Decorator in options with empty block', () => {
-    const rendered = redraft(rawWithNoText, renderers, {
-      Decorator: TestDecorator,
-    });
+  it('should handle custom Decorator in decorators with empty block', () => {
+    const rendered = redraft(rawWithNoText, renderersWithTestDecorator);
     const joined = joinRecursively(rendered);
     joined.should.equal(''); // eslint-disable-line max-len
   });
