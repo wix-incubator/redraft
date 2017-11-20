@@ -68,6 +68,19 @@ const rawWithLink2 = {
   }],
 };
 
+const rawWithEmoji = {
+  entityMap: {},
+  blocks: [{
+    key: '8ofc8',
+    text: 'Raw with 2 char emoji 🐱: http://lokiuz.github.io/redraft/ and some extra text here.',
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+    data: {},
+  }],
+};
+
 const rawWithNoText = {
   entityMap: {},
   blocks: [{
@@ -127,6 +140,11 @@ describe('redraft with decorators', () => {
     const rendered = redraft(rawWithLink2, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal('<strong>Another</strong> raw with link: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'); // eslint-disable-line max-len
+  });
+  it('match the decorator porperly with emoji', () => {
+    const rendered = redraft(rawWithEmoji, renderers);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('Raw with 2 char emoji 🐱: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'); // eslint-disable-line max-len
   });
   it('should handle original ContentBlock', () => {
     const rendered = redraft(rawWithLink, renderers, {
