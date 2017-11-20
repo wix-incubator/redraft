@@ -1,6 +1,6 @@
 {
   "name": "redraft",
-  "version": "0.9.1",
+  "version": "0.9.1-beta2",
   "description": "Renders the result of Draft.js convertToRaw using provided callbacks, works well with React",
   "main": "./lib/index.js",
   "scripts": {
