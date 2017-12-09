@@ -92,7 +92,6 @@ export const raw3 = {
     depth: 0,
     inlineStyleRanges: [],
     entityRanges: [],
-    data: {},
   }, {
     key: '520kr',
     text: 'A quote',
@@ -100,7 +99,6 @@ export const raw3 = {
     depth: 0,
     inlineStyleRanges: [],
     entityRanges: [],
-    data: {},
   }, {
     key: 'c3taj',
     text: 'Spanning multiple lines',
@@ -108,7 +106,6 @@ export const raw3 = {
     depth: 0,
     inlineStyleRanges: [],
     entityRanges: [],
-    data: {},
   }, {
     key: '6aaeh',
     text: 'A second paragraph.',
@@ -116,7 +113,6 @@ export const raw3 = {
     depth: 0,
     inlineStyleRanges: [],
     entityRanges: [],
-    data: {},
   }],
 };
 

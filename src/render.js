@@ -131,11 +131,14 @@ const renderGroup = (group, blockRenderers, rendered, params) => {
     return;
   }
   if (blockRenderers[type]) {
-    rendered.push(blockRenderers[type](group, {
+    const props = {
       depth,
       keys,
-      data,
-    }));
+    };
+    if (data && data.some(item => !!item)) {
+      props.data = data;
+    }
+    rendered.push(blockRenderers[type](group, props));
     return;
   }
   rendered.push(group);

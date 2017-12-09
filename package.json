@@ -20,7 +20,10 @@
     "react"
   ],
   "jest": {
-    "testPathIgnorePatterns": ["/node_modules/", "__tests__/utils"]
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "__tests__/utils"
+    ]
   },
   "author": "",
   "license": "MIT",
@@ -46,8 +49,9 @@
     "jest": "^21.2.1",
     "linkify-it": "^2.0.3",
     "mocha": "^3.0.2",
-    "react": "^15.4.2",
+    "react": "^16.2.0",
     "react-dom": "^15.4.2",
+    "react-test-renderer": "^16.2.0",
     "regenerator-runtime": "^0.11.1",
     "rimraf": "^2.5.2",
     "tlds": "^1.183.0"
