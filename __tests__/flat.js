@@ -35,7 +35,7 @@ const customStyleMapReact = {
 };
 
 const stringifyStyles = reduced => Object.keys(reduced)
-  .map(key => `${key}:${reduced[key]};`).join('');
+  .map(key => `${key}:${reduced[key]}`).join(';');
 
 // render to HTML
 const styles = createStylesRenderer(
@@ -86,26 +86,29 @@ const renderersReact = {
   entities: entitiesReact,
 };
 
-// Helpers for te
-const bold = 'font-weight:bold;';
-const italic = 'font-style:italic;';
-const textDecoration = 'text-decoration:underline line-through;';
 
-const corretRender = `<p><span style="${bold}">Lorem </span><a href="http://zombo.com/"><span style="${bold}${italic}">ipsum</span></a><span style="${bold}${italic}${textDecoration}"> dolor</span><span style="${italic}"> sit amet,</span> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <span style="${italic}">ceteros invenire </span>tractatos his id. </blockquote><p><span style="${bold}">Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</span></p>` // eslint-disable-line max-len
+// Helpers for te
+const bold = 'font-weight:bold';
+const italic = 'font-style:italic';
+const textDecoration = 'text-decoration:underline line-through';
+
+const getStyles = (...arr) => arr.join(';');
+
+const correctRender = `<p><span style="${bold}">Lorem </span><a href="http://zombo.com/"><span style="${getStyles(bold, italic)}">ipsum</span></a><span style="${getStyles(bold, italic, textDecoration)}"> dolor</span><span style="${italic}"> sit amet,</span> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <span style="${italic}">ceteros invenire </span>tractatos his id. </blockquote><p><span style="${bold}">Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</span></p>` // eslint-disable-line max-len
 
 
 describe('redraft with flat styles', () => {
   test('should render flat styles correctly', () => {
     const rendered = redraft(raws.raw, renderers);
     const joined = joinRecursively(rendered);
-    expect(joined).toBe(corretRender);
+    expect(joined).toBe(correctRender);
   });
   test(
     'should render flat styles correctly with ReactDOMServer.renderToStaticMarkup',
     () => {
       const rendered = <div>{redraft(raws.raw, renderersReact)}</div>;
       const stringified = ReactDOMServer.renderToStaticMarkup(rendered);
-      expect(stringified).toBe(`<div>${corretRender}</div>`);
+      expect(stringified).toBe(`<div>${correctRender}</div>`);
     }
   );
 });

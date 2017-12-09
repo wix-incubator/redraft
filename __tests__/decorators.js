@@ -8,6 +8,7 @@ import TestDecorator from './utils/TestDecorator';
 const linkify = linkifyIt();
 linkify.tlds(tlds);
 
+
 const linkStrategy = (contentBlock, callback) => {
   const links = linkify.match(contentBlock.get('text'));
   if (typeof links !== 'undefined' && links !== null) {

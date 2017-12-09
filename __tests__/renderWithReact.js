@@ -4,6 +4,7 @@ import redraft from '../src';
 import * as raws from './utils/raws';
 import createBlockRenderer from '../src/createBlockRenderer';
 
+
 const styles = {
   code: {
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
