@@ -1,12 +1,9 @@
-import chai, { expect } from 'chai';
 import linkifyIt from 'linkify-it';
 import { ContentBlock, convertFromRaw } from 'draft-js';
 import tlds from 'tlds';
 import redraft from '../src';
-import { joinRecursively } from './helpers';
-import TestDecorator from './TestDecorator';
-
-chai.should();
+import { joinRecursively } from './utils/helpers';
+import TestDecorator from './utils/TestDecorator';
 
 const linkify = linkifyIt();
 linkify.tlds(tlds);
@@ -23,7 +20,7 @@ const linkStrategy = (contentBlock, callback) => {
 
 const link = ({ decoratedText, children }) => `<a href="${decoratedText}" >${joinRecursively(children)}</a>`;
 const linkWithContentState = ({ decoratedText, children, contentState }) => {
-  expect(contentState).to.be.an('object');
+  expect(typeof contentState).toBe('object');
   return `<a href="${decoratedText}" >${joinRecursively(children)}</a>`;
 };
 
@@ -131,43 +128,55 @@ const renderersWithTestDecorator = {
 
 
 describe('redraft with decorators', () => {
-  it('should apply decorator ranges and call decorator component', () => {
+  test('should apply decorator ranges and call decorator component', () => {
     const rendered = redraft(rawWithLink, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len
+    expect(joined).toBe(
+      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'
+    ); // eslint-disable-line max-len
   });
-  it('match the decorator porperly', () => {
+  test('match the decorator porperly', () => {
     const rendered = redraft(rawWithLink2, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal('<strong>Another</strong> raw with link: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'); // eslint-disable-line max-len
+    expect(joined).toBe(
+      '<strong>Another</strong> raw with link: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'
+    ); // eslint-disable-line max-len
   });
-  it('match the decorator porperly with emoji', () => {
+  test('match the decorator porperly with emoji', () => {
     const rendered = redraft(rawWithEmoji, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal('Raw with 2 char emoji 🐱: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'); // eslint-disable-line max-len
+    expect(joined).toBe(
+      'Raw with 2 char emoji 🐱: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'
+    ); // eslint-disable-line max-len
   });
-  it('should handle original ContentBlock', () => {
+  test('should handle original ContentBlock', () => {
     const rendered = redraft(rawWithLink, renderers, {
       createContentBlock: block => new ContentBlock(block),
     });
     const joined = joinRecursively(rendered);
-    joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len
+    expect(joined).toBe(
+      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'
+    ); // eslint-disable-line max-len
   });
-  it('should handle convertFromRawToDraftState in options', () => {
+  test('should handle convertFromRawToDraftState in options', () => {
     const rendered = redraft(rawWithLink, renderersWithContentState, {
       convertFromRaw,
     });
     const joined = joinRecursively(rendered);
-    joined.should.equal('<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'); // eslint-disable-line max-len
+    expect(joined).toBe(
+      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'
+    ); // eslint-disable-line max-len
   });
-  it('should handle custom Decorator in decorators array', () => {
+  test('should handle custom Decorator in decorators array', () => {
     const rendered = redraft(rawWithLink, renderersWithTestDecorator);
     const joined = joinRecursively(rendered);
-    joined.should.equal(`<span style="first first-${rawWithLink.blocks[0].key}" >h</span>ttp://lokiuz.<strong>github</strong>.io/redraft/`); // eslint-disable-line max-len
+    expect(joined).toBe(
+      `<span style="first first-${rawWithLink.blocks[0].key}" >h</span>ttp://lokiuz.<strong>github</strong>.io/redraft/`
+    ); // eslint-disable-line max-len
   });
-  it('should handle custom Decorator in decorators with empty block', () => {
+  test('should handle custom Decorator in decorators with empty block', () => {
     const rendered = redraft(rawWithNoText, renderersWithTestDecorator);
     const joined = joinRecursively(rendered);
-    joined.should.equal(''); // eslint-disable-line max-len
+    expect(joined).toBe(''); // eslint-disable-line max-len
   });
 });

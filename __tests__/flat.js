@@ -1,11 +1,8 @@
-import chai from 'chai';
-import redraft, { createStylesRenderer } from '../src';
-import * as raws from './raws';
-import { joinRecursively, makeList } from './helpers';
-import ReactDOMServer from 'react-dom/server';
 import React from 'react';
-
-const should = chai.should();
+import ReactDOMServer from 'react-dom/server';
+import redraft, { createStylesRenderer } from '../src';
+import * as raws from './utils/raws';
+import { joinRecursively, makeList } from './utils/helpers';
 
 const customStyleMap = {
   BOLD: {
@@ -98,15 +95,17 @@ const corretRender = `<p><span style="${bold}">Lorem </span><a href="http://zomb
 
 
 describe('redraft with flat styles', () => {
-  it('should render flat styles correctly', () => {
+  test('should render flat styles correctly', () => {
     const rendered = redraft(raws.raw, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal(corretRender);
+    expect(joined).toBe(corretRender);
   });
-  it('should render flat styles correctly with ReactDOMServer.renderToStaticMarkup', () => {
-    const rendered = <div>{redraft(raws.raw, renderersReact)}</div>;
-    const stringified = ReactDOMServer.renderToStaticMarkup(rendered);
-    stringified.should.equal(`<div>${corretRender}</div>`
-    );
-  });
+  test(
+    'should render flat styles correctly with ReactDOMServer.renderToStaticMarkup',
+    () => {
+      const rendered = <div>{redraft(raws.raw, renderersReact)}</div>;
+      const stringified = ReactDOMServer.renderToStaticMarkup(rendered);
+      expect(stringified).toBe(`<div>${corretRender}</div>`);
+    }
+  );
 });

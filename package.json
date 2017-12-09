@@ -8,8 +8,8 @@
     "watch": "rimraf lib && babel src --out-dir lib --watch",
     "lint": "eslint src",
     "prepublish": "npm run compile && npm test",
-    "mocha": "mocha --compilers js:babel-register",
-    "test": "npm run lint && npm run mocha"
+    "jest": "jest",
+    "test": "npm run lint && npm run jest"
   },
   "repository": {
     "type": "git",
@@ -19,12 +19,16 @@
     "draftjs",
     "react"
   ],
+  "jest": {
+    "testPathIgnorePatterns": ["/node_modules/", "__tests__/utils"]
+  },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-core": "^6.7.2",
+    "babel-core": "^6.26.0",
     "babel-eslint": "^7.0.0",
+    "babel-jest": "^21.2.0",
     "babel-plugin-array-includes": "^2.0.3",
     "babel-preset-env": "^1.2.1",
     "babel-preset-flow": "^6.23.0",
@@ -39,10 +43,12 @@
     "eslint-plugin-react": "^6.4.1",
     "flow-bin": "^0.57.3",
     "immutable": "^3.8.2",
+    "jest": "^21.2.1",
     "linkify-it": "^2.0.3",
     "mocha": "^3.0.2",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "regenerator-runtime": "^0.11.1",
     "rimraf": "^2.5.2",
     "tlds": "^1.183.0"
   },

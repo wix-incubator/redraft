@@ -1,10 +1,7 @@
-import chai from 'chai';
 import redraft from '../src';
 import createBlockRenderer from '../src/createBlockRenderer';
-import * as raws from './raws';
-import { joinRecursively, makeList } from './helpers';
-
-const should = chai.should();
+import * as raws from './utils/raws';
+import { joinRecursively, makeList } from './utils/helpers';
 
 // render to HTML
 const inline = {
@@ -126,104 +123,104 @@ const renderersWithData = {
 };
 
 describe('redraft', () => {
-  it('should render correctly', () => {
+  test('should render correctly', () => {
     const rendered = redraft(raws.raw, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       '<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em><u><span style=text-decoration:line-through;> dolor</span></u></em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'
     ); // eslint-disable-line max-len
   });
-  it('should render blocks with single char correctly', () => {
+  test('should render blocks with single char correctly', () => {
     const rendered = redraft(raws.raw2, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal('<p>!</p>');
+    expect(joined).toBe('<p>!</p>');
   });
-  it('should render blocks with depth correctly 1/2', () => {
+  test('should render blocks with depth correctly 1/2', () => {
     const rendered = redraft(raws.rawWithDepth, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       "<ul><li>Hey<ul><li>Ho<ul><li>Let's</li></ul><ol><li>Go</li></ol></li></ul></li></ul>"
     ); // eslint-disable-line max-len
   });
-  it('should render blocks with depth correctly 2/2', () => {
+  test('should render blocks with depth correctly 2/2', () => {
     const rendered = redraft(raws.rawWithDepth2, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       "<ul><li>Hey<ul><li>Ho<ul><li>Let's</li></ul></li></ul></li></ul><ol><li>Go</li></ol>"
     ); // eslint-disable-line max-len
   });
-  it('should render blocks containing empty lines', () => {
+  test('should render blocks containing empty lines', () => {
     const rendered = redraft(raws.rawWithEmptyLine, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal('<p>!!</p>');
+    expect(joined).toBe('<p>!!</p>');
   });
-  it('should render blocks when first block is empty', () => {
+  test('should render blocks when first block is empty', () => {
     const rendered = redraft(raws.rawEmptyFirstLine, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal('<p>!</p>');
+    expect(joined).toBe('<p>!</p>');
   });
-  it('should render blocks with depth when depth jumps from 0 to 2', () => {
+  test('should render blocks with depth when depth jumps from 0 to 2', () => {
     const rendered = redraft(raws.rawWithDepth3, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       "<ul><li>Hey</li><li>Ho<ul><li>Let's</li></ul></li></ul><ol><li>Go</li></ol>"
     ); // eslint-disable-line max-len
   });
-  it('should style last node properly when its after an entity', () => {
+  test('should style last node properly when its after an entity', () => {
     const rendered = redraft(raws.rawStyleWithEntities, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       '<p><strong>This </strong><div style="color: #ee6a56" ><strong>is a </strong></div><div style="color: #ee6a56" ><strong>Greeting</strong></div><div style="color: #ee6a56" ><strong> redraft</strong></div><strong>bug.</strong></p>'
     ); // eslint-disable-line max-len
   });
-  it('should render blocks with the block keys', () => {
+  test('should render blocks with the block keys', () => {
     const rendered = redraft(raws.raw3, renderersWithKeys);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       '<p key="e047l">Paragraph one</p><blockquote key="520kr,c3taj">A quoteSpanning multiple lines</blockquote><p key="6aaeh">A second paragraph.</p>'
     ); // eslint-disable-line max-len
   });
-  it('should render atomic blocks with block metadata', () => {
+  test('should render atomic blocks with block metadata', () => {
     const rendered = redraft(raws.rawWithMetadata, renderersWithData);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       '<div key="1" style="width: 300px;" >A</div><img key="2" src="img.png" alt="C" />'
     ); // eslint-disable-line max-len
   });
-  it('should render correctly without join', () => {
+  test('should render correctly without join', () => {
     const rendered = redraft(raws.raw, renderersNoJoin, { joinOutput: true });
-    rendered.should.equal(
+    expect(rendered).toBe(
       '<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em><u><span style=text-decoration:line-through;> dolor</span></u></em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'
     ); // eslint-disable-line max-len
   });
-  it('should render null for empty raw blocks array', () => {
+  test('should render null for empty raw blocks array', () => {
     const rendered = redraft(raws.emptyRaw, renderers);
-    should.equal(rendered, null);
+    expect(rendered).toBe(null);
   });
-  it('should return null for an invalid input 1/2', () => {
+  test('should return null for an invalid input 1/2', () => {
     const rendered = redraft(raws.invalidRaw, renderers);
-    should.equal(rendered, null);
+    expect(rendered).toBe(null);
   });
-  it('should return null for an invalid input 2/2', () => {
+  test('should return null for an invalid input 2/2', () => {
     const rendered = redraft([], renderers);
-    should.equal(rendered, null);
+    expect(rendered).toBe(null);
   });
-  it('should return null for no input', () => {
+  test('should return null for no input', () => {
     const rendered = redraft();
-    should.equal(rendered, null);
+    expect(rendered).toBe(null);
   });
-  it('should render blocks with renderer from custom map', () => {
+  test('should render blocks with renderer from custom map', () => {
     const rendered = redraft(raws.raw3, renderersWithCustomMap);
     const joined = joinRecursively(rendered);
-    joined.should.equal(
+    expect(joined).toBe(
       '<p key="e047l">Paragraph one</p><blockquote key="520kr,c3taj">A quoteSpanning multiple lines</blockquote><p key="6aaeh">A second paragraph.</p>'
     ); // eslint-disable-line max-len
   });
-  it('should render blocks with depth and custom map correctly', () => {
+  test('should render blocks with depth and custom map correctly', () => {
     const rendered = redraft(raws.rawWithDepth, renderersWithCustomMap);
     const joined = joinRecursively(rendered);
     // Keys child and parent get same keys as parents have only single child
-    joined.should.equal(
+    expect(joined).toBe(
       '<ul key="eunbc"><li key="eunbc">Hey<ul key="9nl08"><li key="9nl08">Ho<ul key="9qp7i"><li key="9qp7i">Let\'s</li></ul><ol key="1hegu"><li key="1hegu">Go</li></ol></li></ul></li></ul>'
     ); // eslint-disable-line max-len
   });
