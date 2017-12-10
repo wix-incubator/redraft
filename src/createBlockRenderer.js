@@ -13,18 +13,18 @@ const getKey = ({ keys }, key) => {
 
 // Call the wrapper with element, props, and spread children
 // this order is specific to React.createElement
-const getBlock = (element, wrapper, withDepth) => (
+const getBlock = (element, wrapper) => (
   children,
   properties,
   key
 ) => {
   const props = Object.assign({}, properties);
-  if (!withDepth) {
-    delete props.depth;
-  }
+  const blockKey = getKey(props, key);
+  delete props.depth;
+  delete props.keys;
   return wrapper(
     element,
-    Object.assign({}, props, { key: getKey(props, key) }),
+    Object.assign({}, props, { key: blockKey }),
     ...children
   );
 };
@@ -35,7 +35,7 @@ const getWrappedChildren = (callback, block, { children, props, key }) => {
   const blockFn = getBlock(block.element, callback, true);
   return wrapperBlockFn(
     children.map((child, ii) =>
-      blockFn(child, {}, props.keys && props.keys[ii])
+      blockFn(child, { depth: props.depth }, props.keys && props.keys[ii])
     ),
     props,
     key

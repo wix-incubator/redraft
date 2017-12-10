@@ -66,35 +66,41 @@ exports[`renders blocks with depth correctly 2/2 1`] = `
 </div>
 `;
 
+exports[`renders blocks with depth from custom map correctly 1/2 1`] = `
+<div>
+  <ul>
+    <li>
+      Hey
+      <ul>
+        <li>
+          Ho
+          <ul>
+            <li>
+              Let's
+            </li>
+          </ul>
+          <ol>
+            <li>
+              Go
+            </li>
+          </ol>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+`;
+
 exports[`renders blocks with renderer from custom map 1`] = `
 <div>
-  <p
-    keys={
-      Array [
-        "e047l",
-      ]
-    }
-  >
+  <p>
     Paragraph one
   </p>
-  <blockquote
-    keys={
-      Array [
-        "520kr",
-        "c3taj",
-      ]
-    }
-  >
+  <blockquote>
     A quote
     Spanning multiple lines
   </blockquote>
-  <p
-    keys={
-      Array [
-        "6aaeh",
-      ]
-    }
-  >
+  <p>
     A second paragraph.
   </p>
 </div>

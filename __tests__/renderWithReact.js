@@ -182,11 +182,19 @@ it('renders blocks with renderer from custom map', () => {
   expect(tree).toMatchSnapshot();
 });
 
-// test('should render blocks with depth and custom map correctly', () => {
-//   const rendered = redraft(raws.rawWithDepth, renderersWithCustomMap);
-//   const joined = joinRecursively(rendered);
-//   // Keys child and parent get same keys as parents have only single child
-//   expect(joined).toBe(
-//     '<ul key="eunbc"><li key="eunbc">Hey<ul key="9nl08"><li key="9nl08">Ho<ul key="9qp7i"><li key="9qp7i">Let\'s</li></ul><ol key="1hegu"><li key="1hegu">Go</li></ol></li></ul></li></ul>'
-//   ); // eslint-disable-line max-len
-// });
+
+it('renders blocks with depth from custom map correctly 1/2', () => {
+  const tree = renderer
+    .create(
+      <Renderer
+        raw={raws.rawWithDepth}
+        renderers={{
+          inline,
+          blocks: customBlockRendererFn,
+        }}
+      />
+    )
+    .toJSON();
+  expect(tree).toMatchSnapshot();
+});
+
