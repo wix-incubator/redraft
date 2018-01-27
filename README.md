@@ -9,7 +9,7 @@ Renders the result of Draft.js convertToRaw using provided callbacks, works well
 ## What does it do?
 It can convert whole raw state or just specific parts to desired output like React components or an html string.
 
-Additionally you could just parse the raw using provided RawPraser to get a nested structure for a specific block.
+Additionally you could just parse the raw using provided RawParser to get a nested structure for a specific block.
 
 ## Install
 ``` sh
@@ -197,7 +197,7 @@ const renderers = {
 ### Creating the ContentBlock
  `createContentBlock` - a function that receives a block and returns a draft-js ContentBlock, if not provided when using decorators redraft will create a ContentBlock stub with only some basic ContentBlock functionality
 
-*Exmaple usage with ContentBlock from draft-js*
+*Example usage with ContentBlock from draft-js*
 ```js
 import { ContentBlock } from 'draft-js'
 
