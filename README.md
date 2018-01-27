@@ -142,12 +142,11 @@ Returns an array of rendered blocks.
 - **renderers** - object with 3 groups of renders inline (or style), blocks and entities refer to example for more info
 - **options** - optional settings
 
-#### Using style renderer instead of inline
-If provided with a style renderer in the renders, redraft will use it instead of the inline one. This allows a flatter render more like draft.js does in the editor. Redraft also exposes a helper to create the style renderer.
+#### Using styleMap and blockRenderMap instead of inline and block renders
+If provided with a styles renderer in the renders, redraft will use it instead of the inline one. This allows a flatter render more like draft.js does in the editor. Redraft also exposes a helper to create the styles and block renderers.
 ```js
 import React from 'react';
-import redraft, { createStylesRenderer } from 'redraft';
-
+import redraft, { createStylesRenderer, createBlockRenderer } from 'redraft';
 
 const styleMap = {
   BOLD: {
@@ -167,9 +166,28 @@ const styleMap = {
 const InlineWrapper = ({ children, style, key }) => <span key={key} style={style}>{children}</span>
 // this Component results in a flatter output as it can have multiple styles (also possibly less semantic)
 
-// note the style key and createStylesRenderer helper
+// Api aligned w draft-js, aliasedElements are not required as draft-js uses them for parsing pasted html 
+const blockRenderMap = {
+  unstyled: {
+    element: 'div',
+  },
+  blockquote: {
+    element: 'blockquote',
+  },
+  'ordered-list-item': {
+    element: 'li',
+    wrapper: 'ol',
+  },
+  'unordered-list-item': {
+    element: 'li',
+    wrapper: 'ul',
+  },
+};
+
 const renderers = {
+  // note the styles key and createStylesRenderer helper
   styles: createStylesRenderer(InlineWrapper, styleMap),
+  blocks: createBlockRenderer(React.createElement, blockRenderMap),
   ...
 };
 ```
@@ -205,6 +223,13 @@ const createContentBlock = block => new ContentBlock(block)
 
 ```
 
+## Common issues 
+
+#### Missing String.fromCodePoint in React Native
+Consider using a polyfill like [`String.fromCodePoint`](https://github.com/mathiasbynens/String.fromCodePoint) or [`babel-polyfill`](https://babeljs.io/docs/usage/polyfill/)
+
+#### Can the multiple spaces between text be persisted?
+Add `white-space: pre-wrap` to a parent div, this way it will preserve spaces and wrap to new lines (as editor js does)
 
 ## Changelog
 The changelog is available here [CHANGELOG](CHANGELOG.md)
