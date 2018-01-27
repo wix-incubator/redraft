@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders blocks with depth correctly 1/2 1`] = `
+<div>
+  <ul
+    className="ul-level-0"
+  >
+    <li>
+      Hey
+      <ul
+        className="ul-level-1"
+      >
+        <li>
+          Ho
+          <ul
+            className="ul-level-2"
+          >
+            <li>
+              Let's
+            </li>
+          </ul>
+          <ol
+            className="ol-level-2"
+          >
+            <li>
+              Go
+            </li>
+          </ol>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`renders blocks with depth correctly 2/2 1`] = `
+<div>
+  <ul
+    className="ul-level-0"
+  >
+    <li>
+      Hey
+      <ul
+        className="ul-level-1"
+      >
+        <li>
+          Ho
+          <ul
+            className="ul-level-2"
+          >
+            <li>
+              Let's
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <ol
+    className="ol-level-0"
+  >
+    <li>
+      Go
+    </li>
+  </ol>
+</div>
+`;
+
+exports[`renders blocks with depth from custom map correctly 1/2 1`] = `
+<div>
+  <ul>
+    <li>
+      Hey
+      <ul>
+        <li>
+          Ho
+          <ul>
+            <li>
+              Let's
+            </li>
+          </ul>
+          <ol>
+            <li>
+              Go
+            </li>
+          </ol>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`renders blocks with renderer from custom map 1`] = `
+<div>
+  <p>
+    Paragraph one
+  </p>
+  <blockquote>
+    A quote
+    Spanning multiple lines
+  </blockquote>
+  <p>
+    A second paragraph.
+  </p>
+</div>
+`;
+
+exports[`renders blocks with single char correctly 1`] = `
+<div>
+  <p>
+    !
+  </p>
+</div>
+`;
+
+exports[`renders correctly 1`] = `
+<div>
+  <p>
+    <strong>
+      Lorem 
+    </strong>
+    <strong>
+      <em>
+        ipsum
+      </em>
+    </strong>
+    <strong>
+      <em>
+        <u>
+          <span
+            style={
+              Object {
+                "textDecoration": "line-through",
+              }
+            }
+          >
+             dolor
+          </span>
+        </u>
+      </em>
+    </strong>
+    <em>
+       sit amet,
+    </em>
+     pro nisl sonet ad. 
+  </p>
+  <blockquote>
+    Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, 
+    <em>
+      ceteros invenire 
+    </em>
+    tractatos his id. 
+  </blockquote>
+  <p>
+    <strong>
+      Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.
+    </strong>
+  </p>
+</div>
+`;
+
+exports[`renders provided fallback block if current block type is unsuported 1`] = `
+<div>
+  <blockquote>
+    Block of this type is not supported
+  </blockquote>
+</div>
+`;
+
+exports[`renders unstyled block by default if current block type is unsuported 1`] = `
+<div>
+  <p>
+    Block of this type is not supported
+  </p>
+</div>
+`;

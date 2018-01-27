@@ -1,3 +1,9 @@
+## 0.10.0
+- switch from Decorator option to custom decorators in renderer array #33
+- add blockFallback option, render provided type when missing renderer for a block #35
+- expose createBlockRenderer to create block renderer from blockRenderMap #32
+- add Common Issues to readme
+
 ## 0.9.0
 - added support for custom Decorator class and accessing contentState #30
 - fixed inline style key collision #29

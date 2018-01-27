@@ -1,27 +1,63 @@
+import punycode from 'punycode';
 import CompositeDecorator from './helpers/CompositeDecorator';
+import MultiDecorator from './helpers/MultiDecorator';
 import stubContentBlock from './helpers/stubContentBlock';
 
 /**
  * Use CompositeDecorator to build decoratorRanges with ranges, components, and props
  */
 
-// TODO: Maybe it would be wold be good to check if CompositeDecorator
-// is a valid DraftDecoratorType
+// This offsets or rather recalculates ranges for decorators
+// with punycode.ucs2.decode
+const offsetRanges = (ranges, block) => {
+  // if there are no decorator skip this step
+  ranges.forEach((range) => {
+    const pre = block.text.substring(0, range.offset);
+    const decorated = block.text.substring(
+      range.offset,
+      range.offset + range.length
+    );
+    // eslint-disable-next-line no-param-reassign
+    range.offset = punycode.ucs2.decode(pre).length;
+    // eslint-disable-next-line no-param-reassign
+    range.length = punycode.ucs2.decode(decorated).length;
+  });
+  return ranges;
+};
+// Return true if decorator implements the DraftDecoratorType interface
+// @see https://github.com/facebook/draft-js/blob/master/src/model/decorators/DraftDecoratorType.js
+const decoratorIsCustom = decorator =>
+  typeof decorator.getDecorations === 'function' &&
+  typeof decorator.getComponentForKey === 'function' &&
+  typeof decorator.getPropsForKey === 'function';
+
+const resolveDecorators = (decorators) => {
+  const compositeDecorator = new CompositeDecorator(
+    decorators.filter(decorator => !decoratorIsCustom(decorator))
+  );
+
+  const customDecorators = decorators.filter(decorator =>
+    decoratorIsCustom(decorator)
+  );
+  const decor = [...customDecorators, compositeDecorator];
+  return new MultiDecorator(decor);
+};
+
 const decorateBlock = (
   block,
   decorators,
   contentState,
-  { createContentBlock, Decorator = CompositeDecorator }
+  { createContentBlock }
 ) => {
   const decoratorRanges = [];
   // create a Decorator instance
-  const decorator = new Decorator(decorators);
+  const decorator = resolveDecorators(decorators);
   // create ContentBlock or a stub
   const contentBlock = createContentBlock
     ? createContentBlock(block)
     : stubContentBlock(block);
   // Get decorations from CompositeDecorator instance
-  const decorations = decorator.getDecorations(contentBlock, contentState).toArray();
+  const decorations = decorator.getDecorations(contentBlock, contentState);
   // Keep track of offset for current key
   let offset = 0;
   decorations.forEach((key, index) => {
@@ -48,12 +84,13 @@ const decorateBlock = (
     }
   });
   // merge the block with decoratorRanges
-  return Object.assign({}, block, { decoratorRanges });
+  return Object.assign({}, block, {
+    decoratorRanges: offsetRanges(decoratorRanges, block),
+  });
 };
 
 const withDecorators = (raw, decorators, options) => {
-  const contentState = options.convertFromRaw
-  && options.convertFromRaw(raw);
+  const contentState = options.convertFromRaw && options.convertFromRaw(raw);
   return raw.blocks.map(block =>
     decorateBlock(block, decorators, contentState, options || {})
   );

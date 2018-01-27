@@ -50,18 +50,6 @@ function occupySlice(
     targetArr[ii] = componentKey;
   }
 }
-
-type ListStub = {
-  toArray: () => Array<?string>
-};
-
-/**
- * Stub an immutable List with toArray method
- */
-const listStub = (array: Array<?string>): ListStub => ({
-  toArray: () => array,
-});
-
 /**
  * A CompositeDraftDecorator traverses through a list of DraftDecorator
  * instances to identify sections of a ContentBlock that should be rendered
@@ -91,7 +79,7 @@ class CompositeDraftDecorator {
     this.decorators = decorators.slice();
   }
 
-  getDecorations(block: ContentBlock, contentState: ContentState): ListStub {
+  getDecorations(block: ContentBlock, contentState: ContentState): Array<DraftDecorator> {
     const decorations = Array(block.getText().length).fill(null);
 
     this.decorators.forEach((/* object*/ decorator, /* number*/ ii) => {
@@ -110,7 +98,7 @@ class CompositeDraftDecorator {
       strategy(block, callback, contentState);
     });
 
-    return listStub(decorations);
+    return decorations;
   }
 
   getComponentForKey(key: string): Function {

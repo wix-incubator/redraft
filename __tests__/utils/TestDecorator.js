@@ -3,19 +3,10 @@
  */
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import type ContentBlock from 'draft-js/lib/ContentBlock';
+import { List } from 'immutable';
 import { joinRecursively } from './helpers';
-
-type ListStub = {
-  toArray: () => Array<?string>
-};
-
-/**
- * Stub an immutable List with toArray method
- */
-const listStub = (array: Array<?string>): ListStub => ({
-  toArray: () => array,
-});
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type ContentBlock from 'draft-js/lib/ContentBlock';
 
 // Instead of a component return a string for the purpouse of our test,
 // additionaly check if props get passed from getPropsForKey
@@ -24,14 +15,16 @@ const First = ({ children, testKeyProp }) =>
 
 class TestDraftDecorator {
   // eslint-disable-next-line class-methods-use-this
-  getDecorations(block: ContentBlock): ListStub {
+  getDecorations(block: ContentBlock): List<*> {
     const textLenght = block.getText().length;
     const decorations = Array(textLenght).fill(null);
     if (textLenght === 0) {
-      return listStub(decorations);
+      // eslint-disable-next-line new-cap
+      return List(decorations);
     }
     decorations[0] = `first-${block.getKey()}`;
-    return listStub(decorations);
+    // eslint-disable-next-line new-cap
+    return List(decorations);
   }
 
   // eslint-disable-next-line class-methods-use-this

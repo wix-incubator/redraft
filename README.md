@@ -9,7 +9,7 @@ Renders the result of Draft.js convertToRaw using provided callbacks, works well
 ## What does it do?
 It can convert whole raw state or just specific parts to desired output like React components or an html string.
 
-Additionally you could just parse the raw using provided RawPraser to get a nested structure for a specific block.
+Additionally you could just parse the raw using provided RawParser to get a nested structure for a specific block.
 
 ## Install
 ``` sh
@@ -84,7 +84,7 @@ const renderers = {
    * Array of decorators,
    * Entities receive children and the entity data,
    * inspired by https://facebook.github.io/draft-js/docs/advanced-topics-decorators.html
-   * it's also possible to pass a Decorator class to options instead (or additionaly)
+   * it's also possible to pass a custom Decorator class that matches the [DraftDecoratorType](https://github.com/facebook/draft-js/blob/master/src/model/decorators/DraftDecoratorType.js)
    */
   decorators: [
     {
@@ -95,7 +95,8 @@ const renderers = {
       // decoratedText a plain string matched by the strategy
       // if your decorator depends on draft-js contentState you need to provide convertFromRaw in redraft options
       component: ({ children, decoratedText }) => <a href={decoratedText}>{children}/>,
-    }
+    },
+    new CustomDecorator(someOptions),
   ],
 }
 
@@ -141,12 +142,11 @@ Returns an array of rendered blocks.
 - **renderers** - object with 3 groups of renders inline (or style), blocks and entities refer to example for more info
 - **options** - optional settings
 
-#### Using style renderer instead of inline
-If provided with a style renderer in the renders, redraft will use it instead of the inline one. This allows a flatter render more like draft.js does in the editor. Redraft also exposes a helper to create the style renderer.
+#### Using styleMap and blockRenderMap instead of inline and block renders
+If provided with a styles renderer in the renders, redraft will use it instead of the inline one. This allows a flatter render more like draft.js does in the editor. Redraft also exposes a helper to create the styles and block renderers.
 ```js
 import React from 'react';
-import redraft, { createStylesRenderer } from 'redraft';
-
+import redraft, { createStylesRenderer, createBlockRenderer } from 'redraft';
 
 const styleMap = {
   BOLD: {
@@ -166,9 +166,28 @@ const styleMap = {
 const InlineWrapper = ({ children, style, key }) => <span key={key} style={style}>{children}</span>
 // this Component results in a flatter output as it can have multiple styles (also possibly less semantic)
 
-// note the style key and createStylesRenderer helper
+// Api aligned w draft-js, aliasedElements are not required as draft-js uses them for parsing pasted html 
+const blockRenderMap = {
+  unstyled: {
+    element: 'div',
+  },
+  blockquote: {
+    element: 'blockquote',
+  },
+  'ordered-list-item': {
+    element: 'li',
+    wrapper: 'ol',
+  },
+  'unordered-list-item': {
+    element: 'li',
+    wrapper: 'ul',
+  },
+};
+
 const renderers = {
+  // note the styles key and createStylesRenderer helper
   styles: createStylesRenderer(InlineWrapper, styleMap),
+  blocks: createBlockRenderer(React.createElement, blockRenderMap),
   ...
 };
 ```
@@ -186,8 +205,9 @@ const renderers = {
 ### Joining the output
 `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
 
-### Using custom Decorator class
-`Decorator` - use this to pass a custom Decorator class that matches the [DraftDecoratorType](https://github.com/facebook/draft-js/blob/master/src/model/decorators/DraftDecoratorType.js).
+
+### Render fallback for missing block type
+`blockFallback` - redraft will render this block type if its missing a block renderer for a specific type (default: `'unstyled'`)
 
 ### Accessing contentState
 `convertFromRaw` - pass the draft-js convertFromRaw to provide the contentState object to both the components in your decorators and the custom Decorator class getDecorations method.
@@ -195,7 +215,7 @@ const renderers = {
 ### Creating the ContentBlock
  `createContentBlock` - a function that receives a block and returns a draft-js ContentBlock, if not provided when using decorators redraft will create a ContentBlock stub with only some basic ContentBlock functionality
 
-*Exmaple usage with ContentBlock from draft-js*
+*Example usage with ContentBlock from draft-js*
 ```js
 import { ContentBlock } from 'draft-js'
 
@@ -203,6 +223,13 @@ const createContentBlock = block => new ContentBlock(block)
 
 ```
 
+## Common issues 
+
+#### Missing String.fromCodePoint in React Native
+Consider using a polyfill like [`String.fromCodePoint`](https://github.com/mathiasbynens/String.fromCodePoint) or [`babel-polyfill`](https://babeljs.io/docs/usage/polyfill/)
+
+#### Can the multiple spaces between text be persisted?
+Add `white-space: pre-wrap` to a parent div, this way it will preserve spaces and wrap to new lines (as editor js does)
 
 ## Changelog
 The changelog is available here [CHANGELOG](CHANGELOG.md)
