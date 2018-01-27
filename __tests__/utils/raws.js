@@ -83,6 +83,18 @@ export const raw2 = {
   }],
 };
 
+export const unsportedType = {
+  entityMap: {},
+  blocks: [{
+    key: 'az45a',
+    text: 'Block of this type is not supported', // eslint-disable-line max-len
+    type: 'custom',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+  }],
+};
+
 export const raw3 = {
   entityMap: {},
   blocks: [{

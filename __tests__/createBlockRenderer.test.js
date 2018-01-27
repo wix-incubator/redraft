@@ -67,7 +67,7 @@ it('function output with wrapper is correct', () => {
     [list.children[0].children, list.children[1].children],
     {
       testProp: list.props.testProp,
-      keys:  ['key1', 'key2'],
+      keys: ['key1', 'key2'],
       depth: 0,
     },
   );

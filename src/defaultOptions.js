@@ -6,6 +6,7 @@ const defaultOptions = {
     trim: false,
     split: true,
   },
+  blockFallback: 'unstyled',
 };
 
 export default defaultOptions;

@@ -104,7 +104,7 @@ const blockRenderMap = {
 const customBlockRendererFn = createBlockRenderer(React.createElement, blockRenderMap);
 
 
-const Renderer = ({ renderers, raw }) => <div>{redraft(raw, renderers)}</div>;
+const Renderer = ({ renderers, raw, options }) => <div>{redraft(raw, renderers, options)}</div>;
 
 it('renders correctly', () => {
   const tree = renderer
@@ -198,3 +198,37 @@ it('renders blocks with depth from custom map correctly 1/2', () => {
   expect(tree).toMatchSnapshot();
 });
 
+
+it('renders unstyled block by default if current block type is unsuported', () => {
+  const tree = renderer
+    .create(
+      <Renderer
+        raw={raws.unsportedType}
+        renderers={{
+          inline,
+          blocks,
+        }}
+      />
+    )
+    .toJSON();
+  expect(tree).toMatchSnapshot();
+});
+
+
+it('renders provided fallback block if current block type is unsuported', () => {
+  const tree = renderer
+    .create(
+      <Renderer
+        raw={raws.unsportedType}
+        renderers={{
+          inline,
+          blocks,
+        }}
+        options={{
+          blockFallback: 'blockquote',
+        }}
+      />
+    )
+    .toJSON();
+  expect(tree).toMatchSnapshot();
+});

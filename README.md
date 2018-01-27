@@ -187,6 +187,10 @@ const renderers = {
 ### Joining the output
 `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
 
+
+### Render fallback for missing block type
+`blockFallback` - redraft will render this block type if its missing a block renderer for a specific type (default: `'unstyled'`)
+
 ### Accessing contentState
 `convertFromRaw` - pass the draft-js convertFromRaw to provide the contentState object to both the components in your decorators and the custom Decorator class getDecorations method.
 
