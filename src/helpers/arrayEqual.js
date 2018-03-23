@@ -7,7 +7,7 @@ const arraysEqual = (arr1, arr2) => {
   }
   // defining for loops with airbnb config is a pain maybe should disable some rules
   // eslint-disable-next-line
-  for (let i = 0; i++; i < arr1.length) {
+  for (let i = 0; i < arr1.length; i++) {
     if (arr1[i] !== arr2[i]) {
       return false;
     }
