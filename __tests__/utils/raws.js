@@ -618,3 +618,21 @@ export const rawWithEmptyBlocks3 = {
     },
   ],
 };
+
+export const rawWithDuplicateStyles = {
+  entityMap: {},
+  blocks: [
+    {
+      key: 'u1',
+      type: 'unstyled',
+      depth: 0,
+      data: {},
+      inlineStyleRanges: [
+        { length: 6, offset: 0, style: 'BOLD' },
+        { length: 6, offset: 6, style: 'ITALIC' },
+      ],
+      text: 'Lorem ipsum.',
+      entityRanges: [],
+    },
+  ],
+};

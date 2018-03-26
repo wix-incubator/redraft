@@ -168,6 +168,31 @@ exports[`renders provided fallback block if current block type is unsuported 1`]
 </div>
 `;
 
+exports[`renders same length inlineStyles correctly 1`] = `
+<div>
+  <p>
+    <span
+      style={
+        Object {
+          "fontWeight": "bold",
+        }
+      }
+    >
+      Lorem 
+    </span>
+    <span
+      style={
+        Object {
+          "fontStyle": "italic",
+        }
+      }
+    >
+      ipsum.
+    </span>
+  </p>
+</div>
+`;
+
 exports[`renders unstyled block by default if current block type is unsuported 1`] = `
 <div>
   <p>

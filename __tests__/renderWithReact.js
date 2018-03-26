@@ -3,7 +3,7 @@ import renderer from 'react-test-renderer';
 import redraft from '../src';
 import * as raws from './utils/raws';
 import createBlockRenderer from '../src/createBlockRenderer';
-
+import createStylesRenderer from '../src/createStyleRenderer';
 
 const styles = {
   code: {
@@ -101,10 +101,31 @@ const blockRenderMap = {
   },
 };
 
-const customBlockRendererFn = createBlockRenderer(React.createElement, blockRenderMap);
+const customBlockRendererFn = createBlockRenderer(
+  React.createElement,
+  blockRenderMap
+);
 
+const styleMap = {
+  BOLD: {
+    fontWeight: 'bold',
+  },
+  ITALIC: {
+    fontStyle: 'italic',
+  },
+  UNDERLINE: {
+    textDecoration: 'underline',
+  },
+};
 
-const Renderer = ({ renderers, raw, options }) => <div>{redraft(raw, renderers, options)}</div>;
+const InlineWrapper = ({ children, style, key }) => (
+  <span key={key} style={style}>{children}</span>
+);
+// this Component results in a flatter output as it can have multiple styles (also possibly less semantic)
+
+const Renderer = ({ renderers, raw, options }) => (
+  <div>{redraft(raw, renderers, options)}</div>
+);
 
 it('renders correctly', () => {
   const tree = renderer
@@ -135,7 +156,6 @@ it('renders blocks with single char correctly', () => {
     .toJSON();
   expect(tree).toMatchSnapshot();
 });
-
 
 it('renders blocks with depth correctly 1/2', () => {
   const tree = renderer
@@ -182,7 +202,6 @@ it('renders blocks with renderer from custom map', () => {
   expect(tree).toMatchSnapshot();
 });
 
-
 it('renders blocks with depth from custom map correctly 1/2', () => {
   const tree = renderer
     .create(
@@ -198,7 +217,6 @@ it('renders blocks with depth from custom map correctly 1/2', () => {
   expect(tree).toMatchSnapshot();
 });
 
-
 it('renders unstyled block by default if current block type is unsuported', () => {
   const tree = renderer
     .create(
@@ -213,7 +231,6 @@ it('renders unstyled block by default if current block type is unsuported', () =
     .toJSON();
   expect(tree).toMatchSnapshot();
 });
-
 
 it('renders provided fallback block if current block type is unsuported', () => {
   const tree = renderer
@@ -231,4 +248,23 @@ it('renders provided fallback block if current block type is unsuported', () => 
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
+});
+
+it('renders same length inlineStyles correctly', () => {
+  const tree = renderer.create(
+    <Renderer
+      raw={raws.rawWithDuplicateStyles}
+      renderers={{
+        styles: createStylesRenderer(InlineWrapper, styleMap),
+        blocks,
+      }}
+    />
+  );
+  expect(tree.root.findAllByType('span')[0].children).toEqual([
+    'Lorem ',
+  ]);
+  expect(tree.root.findAllByType('span')[1].children).toEqual([
+    'ipsum.',
+  ]);
+  expect(tree.toJSON()).toMatchSnapshot();
 });
