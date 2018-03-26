@@ -1,3 +1,7 @@
+## 0.10.1
+- fix Content Style Not Being Applied Correctly #39
+
+
 ## 0.10.0
 - switch from Decorator option to custom decorators in renderer array #33
 - add blockFallback option, render provided type when missing renderer for a block #35
