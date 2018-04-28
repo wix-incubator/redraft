@@ -94,7 +94,7 @@ const renderers = {
       // component - a callback as with other renderers
       // decoratedText a plain string matched by the strategy
       // if your decorator depends on draft-js contentState you need to provide convertFromRaw in redraft options
-      component: ({ children, decoratedText }) => <a href={decoratedText}>{children}/>,
+      component: ({ children, decoratedText }) => <a href={decoratedText}>{children}</a>,
     },
     new CustomDecorator(someOptions),
   ],
