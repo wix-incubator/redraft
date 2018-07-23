@@ -71,14 +71,14 @@ const renderers = {
     'unordered-list-item': (children, { depth, keys }) => <ul key={keys[keys.length - 1]} class={`ul-level-${depth}`}>{children.map(child => <li>{child}</li>)}</ul>,
     'ordered-list-item': (children, { depth, keys }) => <ol key={keys.join('|')} class={`ol-level-${depth}`}>{children.map((child, index)=> <li key={keys[index]}>{child}</li>)}</ol>,
     // If your blocks use meta data it can also be accessed like keys
-    atomic: (children, { keys, data }) => children.map((child, i) => <Atomic key={keys[i] {...data[i]} />),
+    atomic: (children, { keys, data }) => children.map((child, i) => <Atomic key={keys[i]} {...data[i]} />),
   },
   /**
    * Entities receive children and the entity data
    */
   entities: {
     // key is the entity key value from raw
-    LINK: (children, data, { key }) => <Link key={key} to={data.url}>{children}/>,
+    LINK: (children, data, { key }) => <Link key={key} to={data.url}>{children}</Link>,
   },
   /**
    * Array of decorators,
