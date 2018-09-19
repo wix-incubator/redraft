@@ -107,7 +107,7 @@ const byDepth = (blocks) => {
       unwind(block.depth);
     }
     prevDepth = block.depth;
-    group.push(block);
+    group.push(Object.assign({}, block));
   });
   if (prevDepth !== 0) {
     unwind(0);

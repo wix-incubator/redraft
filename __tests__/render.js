@@ -135,6 +135,12 @@ describe('redraft', () => {
     const joined = joinRecursively(rendered);
     expect(joined).toBe('<p>!</p>');
   });
+  test('should not mutate input when rendering blocks with depth', () => {
+    const before = JSON.stringify(raws.rawWithDepth);
+    const rendered = redraft(raws.rawWithDepth, renderers);
+    const after = JSON.stringify(raws.rawWithDepth);
+    expect(before).toBe(after);
+  });
   test('should render blocks with depth correctly 1/2', () => {
     const rendered = redraft(raws.rawWithDepth, renderers);
     const joined = joinRecursively(rendered);
