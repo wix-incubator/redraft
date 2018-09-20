@@ -1,3 +1,7 @@
+## 0.10.2
+- fix(render): Prevent input mutation #44
+
+
 ## 0.10.1
 - fix Content Style Not Being Applied Correctly #39
 
