@@ -57,6 +57,6 @@
     "tlds": "^1.183.0"
   },
   "dependencies": {
-    "punycode": "^2.1.0"
+    "punycode": "^1.4.1"
   }
 }
