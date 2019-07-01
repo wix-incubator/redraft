@@ -8,16 +8,19 @@
   },
   "dependencies": {
     "draft-js": "^0.10.5",
+    "gh-pages": "^2.0.1",
     "megadraft": "^0.6.5",
-    "redraft": "^0.10.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-transition-group": "^1.0.0"
+    "react-transition-group": "^1.0.0",
+    "redraft": "^0.10.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
