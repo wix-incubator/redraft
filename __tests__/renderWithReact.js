@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Fragment } from 'react';
 import renderer from 'react-test-renderer';
 import redraft from '../src';
@@ -24,13 +25,12 @@ const styles = {
 };
 
 // just a helper to add a <br /> after a block except the last one
-const addBreaklines = (children, keys) =>
-  children.map((child, ii) => (
-    <Fragment key={keys[ii]}>
-      {child}
-      {ii < children.length - 1 && <br />}
-    </Fragment>
-  ));
+const addBreaklines = (children, keys) => children.map((child, ii) => (
+  <Fragment key={keys[ii]}>
+    {child}
+    {ii < children.length - 1 && <br />}
+  </Fragment>
+));
 
 const inline = {
   // The key passed here is just an index based on rendering order inside a block
@@ -38,34 +38,28 @@ const inline = {
   ITALIC: (children, { key }) => <em key={key}>{children}</em>,
   UNDERLINE: (children, { key }) => <u key={key}>{children}</u>,
   CODE: (children, { key }) => (
-    <span key={key} style={styles.code}>{children}</span>
+    <span key={key} style={styles.code}>
+      {children}
+    </span>
   ),
   STRIKETHROUGH: (children, { key }) => (
-    <span key={key} style={styles.strikethrough}>{children}</span>
+    <span key={key} style={styles.strikethrough}>
+      {children}
+    </span>
   ),
 };
 
 const blocks = {
-  unstyled: (children, { keys }) => (
-    <p key={keys[0]}>
-      {addBreaklines(children, keys)}
-    </p>
-  ),
+  unstyled: (children, { keys }) => <p key={keys[0]}>{addBreaklines(children, keys)}</p>,
   blockquote: (children, { keys }) => (
     <blockquote key={keys[0]}>{addBreaklines(children, keys)}</blockquote>
   ),
-  'header-one': (children, { keys }) =>
-    children.map((child, i) => <h1 key={keys[i]}>{child}</h1>),
-  'header-two': (children, { keys }) =>
-    children.map((child, i) => <h2 key={keys[i]}>{child}</h2>),
-  'header-three': (children, { keys }) =>
-    children.map((child, i) => <h3 key={keys[i]}>{child}</h3>),
-  'header-four': (children, { keys }) =>
-    children.map((child, i) => <h4 key={keys[i]}>{child}</h4>),
-  'header-five': (children, { keys }) =>
-    children.map((child, i) => <h5 key={keys[i]}>{child}</h5>),
-  'header-six': (children, { keys }) =>
-    children.map((child, i) => <h6 key={keys[i]}>{child}</h6>),
+  'header-one': (children, { keys }) => children.map((child, i) => <h1 key={keys[i]}>{child}</h1>),
+  'header-two': (children, { keys }) => children.map((child, i) => <h2 key={keys[i]}>{child}</h2>),
+  'header-three': (children, { keys }) => children.map((child, i) => <h3 key={keys[i]}>{child}</h3>),
+  'header-four': (children, { keys }) => children.map((child, i) => <h4 key={keys[i]}>{child}</h4>),
+  'header-five': (children, { keys }) => children.map((child, i) => <h5 key={keys[i]}>{child}</h5>),
+  'header-six': (children, { keys }) => children.map((child, i) => <h6 key={keys[i]}>{child}</h6>),
   'code-block': (children, { keys }) => (
     <pre style={styles.codeBlock} key={keys[0]}>
       {addBreaklines(children, keys)}
@@ -74,12 +68,16 @@ const blocks = {
   // or depth for nested lists
   'unordered-list-item': (children, { depth, keys }) => (
     <ul key={keys[keys.length - 1]} className={`ul-level-${depth}`}>
-      {children.map((child, index) => <li key={keys[index]}>{child}</li>)}
+      {children.map((child, index) => (
+        <li key={keys[index]}>{child}</li>
+      ))}
     </ul>
   ),
   'ordered-list-item': (children, { depth, keys }) => (
     <ol key={keys.join('|')} className={`ol-level-${depth}`}>
-      {children.map((child, index) => <li key={keys[index]}>{child}</li>)}
+      {children.map((child, index) => (
+        <li key={keys[index]}>{child}</li>
+      ))}
     </ol>
   ),
 };
@@ -101,10 +99,7 @@ const blockRenderMap = {
   },
 };
 
-const customBlockRendererFn = createBlockRenderer(
-  React.createElement,
-  blockRenderMap
-);
+const customBlockRendererFn = createBlockRenderer(React.createElement, blockRenderMap);
 
 const styleMap = {
   BOLD: {
@@ -119,13 +114,14 @@ const styleMap = {
 };
 
 const InlineWrapper = ({ children, style, key }) => (
-  <span key={key} style={style}>{children}</span>
+  <span key={key} style={style}>
+    {children}
+  </span>
 );
-// this Component results in a flatter output as it can have multiple styles (also possibly less semantic)
 
-const Renderer = ({ renderers, raw, options }) => (
-  <div>{redraft(raw, renderers, options)}</div>
-);
+// This Component results in a flatter output as it can have multiple styles
+// Also possibly less semantic ;)
+const Renderer = ({ renderers, raw, options }) => <div>{redraft(raw, renderers, options)}</div>;
 
 it('renders correctly', () => {
   const tree = renderer
@@ -136,7 +132,7 @@ it('renders correctly', () => {
           inline,
           blocks,
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -151,7 +147,7 @@ it('renders blocks with single char correctly', () => {
           inline,
           blocks,
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -166,7 +162,7 @@ it('renders blocks with depth correctly 1/2', () => {
           inline,
           blocks,
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -181,7 +177,7 @@ it('renders blocks with depth correctly 2/2', () => {
           inline,
           blocks,
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -196,7 +192,7 @@ it('renders blocks with renderer from custom map', () => {
           inline,
           blocks: customBlockRendererFn,
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -211,7 +207,7 @@ it('renders blocks with depth from custom map correctly 1/2', () => {
           inline,
           blocks: customBlockRendererFn,
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -226,7 +222,7 @@ it('renders unstyled block by default if current block type is unsuported', () =
           inline,
           blocks,
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -244,7 +240,7 @@ it('renders provided fallback block if current block type is unsuported', () => 
         options={{
           blockFallback: 'blockquote',
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();
@@ -258,13 +254,9 @@ it('renders same length inlineStyles correctly', () => {
         styles: createStylesRenderer(InlineWrapper, styleMap),
         blocks,
       }}
-    />
+    />,
   );
-  expect(tree.root.findAllByType('span')[0].children).toEqual([
-    'Lorem ',
-  ]);
-  expect(tree.root.findAllByType('span')[1].children).toEqual([
-    'ipsum.',
-  ]);
+  expect(tree.root.findAllByType('span')[0].children).toEqual(['Lorem ']);
+  expect(tree.root.findAllByType('span')[1].children).toEqual(['ipsum.']);
   expect(tree.toJSON()).toMatchSnapshot();
 });

@@ -3,12 +3,12 @@ import * as raws from './utils/raws';
 import { joinRecursively } from './utils/helpers';
 
 const inline = {
-  BOLD: (children) => `<strong>${children.join('')}</strong>`,
-  ITALIC: (children) => `<em>${children.join('')}</em>`,
+  BOLD: children => `<strong>${children.join('')}</strong>`,
+  ITALIC: children => `<em>${children.join('')}</em>`,
 };
 
 const blocks = {
-  unstyled: (children) => `<p>${joinRecursively(children)}</p>`,
+  unstyled: children => `<p>${joinRecursively(children)}</p>`,
 };
 
 const entities = {
@@ -22,14 +22,11 @@ const renderers = {
 };
 
 describe('redraft with unicode', () => {
-  test(
-    'should apply ranges properly for surrogate pairs at the end of a block',
-    () => {
-      const rendered = redraft(raws.rawWithEmoji, renderers);
-      const joined = joinRecursively(rendered);
-      expect(joined).toBe('<p><strong>abc <em>😀</em></strong></p>'); // eslint-disable-line max-len
-    }
-  );
+  test('should apply ranges properly for surrogate pairs at the end of a block', () => {
+    const rendered = redraft(raws.rawWithEmoji, renderers);
+    const joined = joinRecursively(rendered);
+    expect(joined).toBe('<p><strong>abc <em>😀</em></strong></p>'); // eslint-disable-line max-len
+  });
   test('should apply ranges properly for multiple surrogate pairs', () => {
     const rendered = redraft(raws.rawWithEmoji2, renderers);
     const joined = joinRecursively(rendered);

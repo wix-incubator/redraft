@@ -1,12 +1,11 @@
 import redraft from '../src';
 import * as raws from './utils/raws';
-import { joinRecursively, makeList } from './utils/helpers';
-
+import { joinRecursively } from './utils/helpers';
 
 // render to HTML
 const inline = {
-  BOLD: (children) => `<strong>${children.join('')}</strong>`,
-  ITALIC: (children) => `<em>${children.join('')}</em>`,
+  BOLD: children => `<strong>${children.join('')}</strong>`,
+  ITALIC: children => `<em>${children.join('')}</em>`,
 };
 
 const atomicBlocks = {
@@ -15,12 +14,10 @@ const atomicBlocks = {
 };
 
 const blocks = {
-  unstyled: (children) => `<p>${joinRecursively(children)}</p>`,
-  blockquote: (children) => `<blockquote>${joinRecursively(children)}</blockquote>`,
+  unstyled: children => `<p>${joinRecursively(children)}</p>`,
+  blockquote: children => `<blockquote>${joinRecursively(children)}</blockquote>`,
   atomic: (children, { keys, data }) => {
-    const maped = children.map(
-      (child, i) => atomicBlocks[data[i].type](child, data[i], keys[i])
-    );
+    const maped = children.map((child, i) => atomicBlocks[data[i].type](child, data[i], keys[i]));
     return joinRecursively(maped);
   },
 };
@@ -30,9 +27,7 @@ const entities = {
   ENTITY: (children, entity) => `<div style="color: ${entity.data.color}" >${joinRecursively(children)}</div>`,
 };
 
-
 // render to HTML
-
 
 const renderers = {
   inline,
@@ -45,7 +40,7 @@ describe('redraft with cleanup', () => {
     const rendered = redraft(raws.rawWithEmptyBlocks, renderers);
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><blockquote></blockquote><img key="3" src="img.png" alt="D" /><p> </p>'
+      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><blockquote></blockquote><img key="3" src="img.png" alt="D" /><p> </p>',
     ); // eslint-disable-line max-len
   });
   test('should respect trim option', () => {
@@ -54,7 +49,7 @@ describe('redraft with cleanup', () => {
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><blockquote></blockquote><img key="3" src="img.png" alt="D" />'
+      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><blockquote></blockquote><img key="3" src="img.png" alt="D" />',
     ); // eslint-disable-line max-len
   });
   test('should respect passing types as an array', () => {
@@ -63,16 +58,16 @@ describe('redraft with cleanup', () => {
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><img key="3" src="img.png" alt="D" /><p> </p>'
+      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><img key="3" src="img.png" alt="D" /><p> </p>',
     ); // eslint-disable-line max-len
   });
-  test('should respect passing \'all\' to types', () => {
+  test("should respect passing 'all' to types", () => {
     const rendered = redraft(raws.rawWithEmptyBlocks, renderers, {
       cleanup: { types: 'all', after: ['atomic'], trim: false },
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><img key="3" src="img.png" alt="D" /><p> </p>'
+      '<div key="1" style="width: 300px;" >A</div><div key="2" style="width: 100px;" >B</div><img key="3" src="img.png" alt="D" /><p> </p>',
     ); // eslint-disable-line max-len
   });
   test('should check for data when triming', () => {
@@ -81,16 +76,16 @@ describe('redraft with cleanup', () => {
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<p></p><div key="a1" style="width: 300px;" ></div><p>A</p><div key="a2" style="width: 300px;" > </div>'
+      '<p></p><div key="a1" style="width: 300px;" ></div><p>A</p><div key="a2" style="width: 300px;" > </div>',
     ); // eslint-disable-line max-len
   });
-  test('should respect passing \'all\' to after', () => {
+  test("should respect passing 'all' to after", () => {
     const rendered = redraft(raws.rawWithEmptyBlocks2, renderers, {
       cleanup: { types: 'all', after: 'all', trim: false },
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<div key="a1" style="width: 300px;" ></div><p>A</p><div key="a2" style="width: 300px;" > </div>'
+      '<div key="a1" style="width: 300px;" ></div><p>A</p><div key="a2" style="width: 300px;" > </div>',
     ); // eslint-disable-line max-len
   });
   test('should respect passing except array', () => {
@@ -99,7 +94,7 @@ describe('redraft with cleanup', () => {
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<div key="a1" style="width: 300px;" ></div><p>A</p><blockquote></blockquote><div key="a2" style="width: 300px;" > </div>'
+      '<div key="a1" style="width: 300px;" ></div><p>A</p><blockquote></blockquote><div key="a2" style="width: 300px;" > </div>',
     ); // eslint-disable-line max-len
   });
   test('should render all blocks with cleanup disabled', () => {
@@ -108,7 +103,7 @@ describe('redraft with cleanup', () => {
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<div key="1" style="width: 300px;" >A</div><p></p><div key="2" style="width: 100px;" >B</div><blockquote></blockquote><img key="3" src="img.png" alt="D" /><p> </p>'
+      '<div key="1" style="width: 300px;" >A</div><p></p><div key="2" style="width: 100px;" >B</div><blockquote></blockquote><img key="3" src="img.png" alt="D" /><p> </p>',
     ); // eslint-disable-line max-len
   });
   test('should split groups properly with split enabled', () => {

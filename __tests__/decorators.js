@@ -8,7 +8,6 @@ import TestDecorator from './utils/TestDecorator';
 const linkify = linkifyIt();
 linkify.tlds(tlds);
 
-
 const linkStrategy = (contentBlock, callback) => {
   const links = linkify.match(contentBlock.get('text'));
   if (typeof links !== 'undefined' && links !== null) {
@@ -18,13 +17,11 @@ const linkStrategy = (contentBlock, callback) => {
   }
 };
 
-
 const link = ({ decoratedText, children }) => `<a href="${decoratedText}" >${joinRecursively(children)}</a>`;
 const linkWithContentState = ({ decoratedText, children, contentState }) => {
   expect(typeof contentState).toBe('object');
   return `<a href="${decoratedText}" >${joinRecursively(children)}</a>`;
 };
-
 
 const decorators = [
   {
@@ -42,64 +39,71 @@ const decoratorsContentState = [
 
 const rawWithLink = {
   entityMap: {},
-  blocks: [{
-    key: '8ofc8',
-    text: 'http://lokiuz.github.io/redraft/',
-    type: 'unstyled',
-    depth: 0,
-    inlineStyleRanges: [{ offset: 14, length: 6, style: 'BOLD' }],
-    entityRanges: [],
-    data: {},
-  }],
+  blocks: [
+    {
+      key: '8ofc8',
+      text: 'http://lokiuz.github.io/redraft/',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [{ offset: 14, length: 6, style: 'BOLD' }],
+      entityRanges: [],
+      data: {},
+    },
+  ],
 };
 
 const rawWithLink2 = {
   entityMap: {},
-  blocks: [{
-    key: '8ofc8',
-    text: 'Another raw with link: http://lokiuz.github.io/redraft/ and some extra text here.',
-    type: 'unstyled',
-    depth: 0,
-    inlineStyleRanges: [{ offset: 0, length: 7, style: 'BOLD' }],
-    entityRanges: [],
-    data: {},
-  }],
+  blocks: [
+    {
+      key: '8ofc8',
+      text: 'Another raw with link: http://lokiuz.github.io/redraft/ and some extra text here.',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [{ offset: 0, length: 7, style: 'BOLD' }],
+      entityRanges: [],
+      data: {},
+    },
+  ],
 };
 
 const rawWithEmoji = {
   entityMap: {},
-  blocks: [{
-    key: '8ofc8',
-    text: 'Raw with 2 char emoji 🐱: http://lokiuz.github.io/redraft/ and some extra text here.',
-    type: 'unstyled',
-    depth: 0,
-    inlineStyleRanges: [],
-    entityRanges: [],
-    data: {},
-  }],
+  blocks: [
+    {
+      key: '8ofc8',
+      text: 'Raw with 2 char emoji 🐱: http://lokiuz.github.io/redraft/ and some extra text here.',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+      data: {},
+    },
+  ],
 };
 
 const rawWithNoText = {
   entityMap: {},
-  blocks: [{
-    key: '8ofc8',
-    text: '',
-    type: 'unstyled',
-    depth: 0,
-    inlineStyleRanges: [],
-    entityRanges: [],
-    data: {},
-  }],
+  blocks: [
+    {
+      key: '8ofc8',
+      text: '',
+      type: 'unstyled',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+      data: {},
+    },
+  ],
 };
 
-
 const inline = {
-  BOLD: (children) => `<strong>${children.join('')}</strong>`,
-  ITALIC: (children) => `<em>${children.join('')}</em>`,
+  BOLD: children => `<strong>${children.join('')}</strong>`,
+  ITALIC: children => `<em>${children.join('')}</em>`,
 };
 
 const blocks = {
-  unstyled: (children) => `${joinRecursively(children)}`,
+  unstyled: children => `${joinRecursively(children)}`,
 };
 
 const entities = {
@@ -127,27 +131,26 @@ const renderersWithTestDecorator = {
   decorators: [new TestDecorator()],
 };
 
-
 describe('redraft with decorators', () => {
   test('should apply decorator ranges and call decorator component', () => {
     const rendered = redraft(rawWithLink, renderers);
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'
+      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>',
     ); // eslint-disable-line max-len
   });
   test('match the decorator porperly', () => {
     const rendered = redraft(rawWithLink2, renderers);
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<strong>Another</strong> raw with link: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'
+      '<strong>Another</strong> raw with link: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.',
     ); // eslint-disable-line max-len
   });
   test('match the decorator porperly with emoji', () => {
     const rendered = redraft(rawWithEmoji, renderers);
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      'Raw with 2 char emoji 🐱: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.'
+      'Raw with 2 char emoji 🐱: <a href="http://lokiuz.github.io/redraft/" >http://lokiuz.github.io/redraft/</a> and some extra text here.',
     ); // eslint-disable-line max-len
   });
   test('should handle original ContentBlock', () => {
@@ -156,7 +159,7 @@ describe('redraft with decorators', () => {
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'
+      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>',
     ); // eslint-disable-line max-len
   });
   test('should handle convertFromRawToDraftState in options', () => {
@@ -165,14 +168,16 @@ describe('redraft with decorators', () => {
     });
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>'
+      '<a href="http://lokiuz.github.io/redraft/" >http://lokiuz.<strong>github</strong>.io/redraft/</a>',
     ); // eslint-disable-line max-len
   });
   test('should handle custom Decorator in decorators array', () => {
     const rendered = redraft(rawWithLink, renderersWithTestDecorator);
     const joined = joinRecursively(rendered);
     expect(joined).toBe(
-      `<span style="first first-${rawWithLink.blocks[0].key}" >h</span>ttp://lokiuz.<strong>github</strong>.io/redraft/`
+      `<span style="first first-${
+        rawWithLink.blocks[0].key
+      }" >h</span>ttp://lokiuz.<strong>github</strong>.io/redraft/`,
     ); // eslint-disable-line max-len
   });
   test('should handle custom Decorator in decorators with empty block', () => {
