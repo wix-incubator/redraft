@@ -19,7 +19,7 @@ $ npm install --save redraft
 
 ## Demo
 
-A live version of the example source is available [here](http://lokiuz.github.io/redraft/).
+A live version of the example source is available [here](https://lokiuz.github.io/redraft/).
 
 ## Rendering to React - simplified example
 
