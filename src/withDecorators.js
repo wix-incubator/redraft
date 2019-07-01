@@ -13,10 +13,7 @@ const offsetRanges = (ranges, block) => {
   // if there are no decorator skip this step
   ranges.forEach((range) => {
     const pre = block.text.substring(0, range.offset);
-    const decorated = block.text.substring(
-      range.offset,
-      range.offset + range.length
-    );
+    const decorated = block.text.substring(range.offset, range.offset + range.length);
     // eslint-disable-next-line no-param-reassign
     range.offset = punycode.ucs2.decode(pre).length;
     // eslint-disable-next-line no-param-reassign
@@ -26,36 +23,26 @@ const offsetRanges = (ranges, block) => {
 };
 // Return true if decorator implements the DraftDecoratorType interface
 // @see https://github.com/facebook/draft-js/blob/master/src/model/decorators/DraftDecoratorType.js
-const decoratorIsCustom = decorator =>
-  typeof decorator.getDecorations === 'function' &&
-  typeof decorator.getComponentForKey === 'function' &&
-  typeof decorator.getPropsForKey === 'function';
+const decoratorIsCustom = decorator => typeof decorator.getDecorations === 'function'
+  && typeof decorator.getComponentForKey === 'function'
+  && typeof decorator.getPropsForKey === 'function';
 
 const resolveDecorators = (decorators) => {
   const compositeDecorator = new CompositeDecorator(
-    decorators.filter(decorator => !decoratorIsCustom(decorator))
+    decorators.filter(decorator => !decoratorIsCustom(decorator)),
   );
 
-  const customDecorators = decorators.filter(decorator =>
-    decoratorIsCustom(decorator)
-  );
+  const customDecorators = decorators.filter(decorator => decoratorIsCustom(decorator));
   const decor = [...customDecorators, compositeDecorator];
   return new MultiDecorator(decor);
 };
 
-const decorateBlock = (
-  block,
-  decorators,
-  contentState,
-  { createContentBlock }
-) => {
+const decorateBlock = (block, decorators, contentState, { createContentBlock }) => {
   const decoratorRanges = [];
   // create a Decorator instance
   const decorator = resolveDecorators(decorators);
   // create ContentBlock or a stub
-  const contentBlock = createContentBlock
-    ? createContentBlock(block)
-    : stubContentBlock(block);
+  const contentBlock = createContentBlock ? createContentBlock(block) : stubContentBlock(block);
   // Get decorations from CompositeDecorator instance
   const decorations = decorator.getDecorations(contentBlock, contentState);
   // Keep track of offset for current key
@@ -91,9 +78,7 @@ const decorateBlock = (
 
 const withDecorators = (raw, decorators, options) => {
   const contentState = options.convertFromRaw && options.convertFromRaw(raw);
-  return raw.blocks.map(block =>
-    decorateBlock(block, decorators, contentState, options || {})
-  );
+  return raw.blocks.map(block => decorateBlock(block, decorators, contentState, options || {}));
 };
 
 export default withDecorators;

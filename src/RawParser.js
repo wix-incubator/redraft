@@ -5,7 +5,6 @@ import ContentNode from './ContentNode';
  */
 const getString = (array, from, to) => punycode.ucs2.encode(array.slice(from, to));
 
-
 /**
  * creates nodes with entity keys and the endOffset
  */
@@ -25,28 +24,32 @@ function createNodes(entityRanges, decoratorRanges = [], textArray, block) {
       nodes.push(new ContentNode({ block, start: lastIndex, end: range.offset }));
     }
     // push the node for the entity
-    nodes.push(new ContentNode({
-      block,
-      entity: range.key,
-      decorator: range.component,
-      decoratorProps: range.decoratorProps,
-      decoratedText: range.component
-        ? getString(textArray, range.offset, range.offset + range.length)
-        : undefined,
-      start: range.offset,
-      end: range.offset + range.length,
-      contentState: range.contentState,
-    }));
+    nodes.push(
+      new ContentNode({
+        block,
+        entity: range.key,
+        decorator: range.component,
+        decoratorProps: range.decoratorProps,
+        decoratedText: range.component
+          ? getString(textArray, range.offset, range.offset + range.length)
+          : undefined,
+        start: range.offset,
+        end: range.offset + range.length,
+        contentState: range.contentState,
+      }),
+    );
     lastIndex = range.offset + range.length;
   });
 
   // finaly add a node for the remaining text if any
   if (lastIndex < textArray.length) {
-    nodes.push(new ContentNode({
-      block,
-      start: lastIndex,
-      end: textArray.length,
-    }));
+    nodes.push(
+      new ContentNode({
+        block,
+        start: lastIndex,
+        end: textArray.length,
+      }),
+    );
   }
   return nodes;
 }
@@ -72,22 +75,20 @@ function getRelevantIndexes(text, inlineRanges, entityRanges = [], decoratorRang
   relevantIndexes.push(0);
   relevantIndexes.push(text.length);
   const uniqueRelevantIndexes = relevantIndexes.filter(
-    (value, index, self) => self.indexOf(value) === index
+    (value, index, self) => self.indexOf(value) === index,
   );
   // and sort it
-  return uniqueRelevantIndexes.sort((aa, bb) => (aa - bb));
+  return uniqueRelevantIndexes.sort((aa, bb) => aa - bb);
 }
 
-
 export default class RawParser {
-
   constructor({ flat = false }) {
     this.flat = flat;
   }
 
   relevantStyles(offset) {
     const styles = this.ranges.filter(
-      range => offset >= range.offset && offset < (range.offset + range.length)
+      range => offset >= range.offset && offset < range.offset + range.length,
     );
     return styles.map(style => style.style);
   }
@@ -98,7 +99,7 @@ export default class RawParser {
   nodeIterator(node, start, end) {
     const indexes = this.relevantIndexes.slice(
       this.relevantIndexes.indexOf(start),
-      this.relevantIndexes.indexOf(end)
+      this.relevantIndexes.indexOf(end),
     );
     // loops while next index is smaller than the endOffset
     indexes.forEach((index, key) => {
@@ -106,9 +107,7 @@ export default class RawParser {
       // (regardless of whether there *is* a next char or not)
       const characterStyles = this.relevantStyles(index);
       // calculate distance or set it to 1 if thers no next index
-      const distance = indexes[key + 1]
-                       ? indexes[key + 1] - index
-                       : 1;
+      const distance = indexes[key + 1] ? indexes[key + 1] - index : 1;
       // add all the chars up to next relevantIndex
       const text = getString(this.textArray, index, index + distance);
       node.pushContent(text, characterStyles, this.flat);
@@ -117,7 +116,8 @@ export default class RawParser {
       if (!indexes[key + 1] && index < end) {
         node.pushContent(
           getString(this.textArray, index + 1, end),
-          this.relevantStyles(end - 1), this.flat
+          this.relevantStyles(end - 1),
+          this.flat,
         );
       }
     });
@@ -130,7 +130,9 @@ export default class RawParser {
    * the idea is still mostly same as backdraft.js (https://github.com/evanc/backdraft-js)
    */
   parse(block) {
-    const { text, inlineStyleRanges: ranges, entityRanges, decoratorRanges = [] } = block;
+    const {
+      text, inlineStyleRanges: ranges, entityRanges, decoratorRanges = [],
+    } = block;
     // Some unicode charactes actualy have length of more than 1
     // this creates an array of code points using es6 string iterator
     this.textArray = punycode.ucs2.decode(text);
@@ -140,10 +142,7 @@ export default class RawParser {
     this.relevantIndexes = getRelevantIndexes(text, ranges, entityRanges, decoratorRanges);
     // create entity or empty nodes to place the inline styles in
     const nodes = createNodes(entityRanges, decoratorRanges, this.textArray, block);
-    const parsedNodes = nodes.map(node =>
-      this.nodeIterator(node, node.start, node.end)
-    );
+    const parsedNodes = nodes.map(node => this.nodeIterator(node, node.start, node.end));
     return new ContentNode({ block, content: parsedNodes });
   }
-
 }

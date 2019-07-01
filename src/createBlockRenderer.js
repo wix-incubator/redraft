@@ -16,7 +16,7 @@ const getKey = ({ keys }, key) => {
 const getBlock = (element, wrapper) => (
   children,
   properties,
-  key
+  key,
 ) => {
   const props = Object.assign({}, properties);
   const blockKey = getKey(props, key);
@@ -25,7 +25,7 @@ const getBlock = (element, wrapper) => (
   return wrapper(
     element,
     Object.assign({}, props, { key: blockKey }),
-    ...children
+    ...children,
   );
 };
 
@@ -34,11 +34,13 @@ const getWrappedChildren = (callback, block, { children, props, key }) => {
   const wrapperBlockFn = getBlock(block.wrapper, callback);
   const blockFn = getBlock(block.element, callback, true);
   return wrapperBlockFn(
-    children.map((child, ii) =>
-      blockFn(child, { depth: props.depth }, props.keys && props.keys[ii])
-    ),
+    children.map((child, ii) => blockFn(
+      child,
+      { depth: props.depth },
+      props.keys && props.keys[ii],
+    )),
     props,
-    key
+    key,
   );
 };
 
@@ -51,12 +53,11 @@ const createBlockRenderer = (callback, blockMap) => {
     const block = blockMap[item];
     // If wrapper is present children need to be nested inside
     if (block.wrapper) {
-      renderer[item] = (children, props, key) =>
-        getWrappedChildren(callback, block, {
-          children,
-          props,
-          key,
-        });
+      renderer[item] = (children, props, key) => getWrappedChildren(callback, block, {
+        children,
+        props,
+        key,
+      });
       return;
     }
     // Wrapper is not present

@@ -23,7 +23,7 @@ const DELIMITER = '.';
 function canOccupySlice(
   decorations: Array<?string>,
   start: number,
-  end: number
+  end: number,
 ): boolean {
   // eslint-disable-next-line no-plusplus
   for (let ii = start; ii < end; ii++) {
@@ -42,7 +42,7 @@ function occupySlice(
   targetArr: Array<?string>,
   start: number,
   end: number,
-  componentKey: string
+  componentKey: string,
 ): void {
   // eslint-disable-next-line no-plusplus
   for (let ii = start; ii < end; ii++) {
@@ -82,10 +82,10 @@ class CompositeDraftDecorator {
   getDecorations(block: ContentBlock, contentState: ContentState): Array<DraftDecorator> {
     const decorations = Array(block.getText().length).fill(null);
 
-    this.decorators.forEach((/* object*/ decorator, /* number*/ ii) => {
+    this.decorators.forEach((/* object */ decorator, /* number */ ii) => {
       let counter = 0;
       const { strategy } = decorator;
-      const callback = (/* number*/ start, /* number*/ end) => {
+      const callback = (/* number */ start, /* number */ end) => {
         // Find out if any of our matching range is already occupied
         // by another decorator. If so, discard the match. Otherwise, store
         // the component key for rendering.

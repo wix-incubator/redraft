@@ -19,14 +19,10 @@ export const renderNode = (
   styleRenderers,
   entityMap,
   options,
-  keyGenerator
+  keyGenerator,
 ) => {
   if (node.styles && styleRenderers) {
-    return styleRenderers(
-      checkJoin(node.content, options),
-      node.styles,
-      { key: keyGenerator() }
-    );
+    return styleRenderers(checkJoin(node.content, options), node.styles, { key: keyGenerator() });
   }
   let children = [];
   let index = 0;
@@ -42,38 +38,38 @@ export const renderNode = (
         styleRenderers,
         entityMap,
         options,
-        keyGenerator
+        keyGenerator,
       );
       index += 1;
     }
   });
   if (node.style && inlineRenderers[node.style]) {
-    return inlineRenderers[node.style](
-      checkJoin(children, options),
-      { key: keyGenerator() }
-    );
+    return inlineRenderers[node.style](checkJoin(children, options), { key: keyGenerator() });
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
     if (entity && entityRenderers[entity.type]) {
-      return entityRenderers[entity.type](
-        checkJoin(children, options),
-        entity.data,
-        { key: node.entity }
-      );
+      return entityRenderers[entity.type](checkJoin(children, options), entity.data, {
+        key: node.entity,
+      });
     }
   }
   if (node.decorator !== null) {
     // FIXME: few props are missing see https://github.com/facebook/draft-js/blob/0c609d9d3671fdbbe2a290ed160a0537f846f08e/src/component/contents/DraftEditorBlock.react.js#L196-L205
     const decoratorOffsetKey = [node.block.key, node.start, 0].join(KEY_DELIMITER);
-    return node.decorator(Object.assign({
-      children: checkJoin(children, options),
-      decoratedText: node.decoratedText,
-      contentState: node.contentState,
-      entityKey: node.entity,
-      offsetKey: decoratorOffsetKey,
-      key: decoratorOffsetKey,
-    }, node.decoratorProps));
+    return node.decorator(
+      Object.assign(
+        {
+          children: checkJoin(children, options),
+          decoratedText: node.decoratedText,
+          contentState: node.contentState,
+          entityKey: node.entity,
+          offsetKey: decoratorOffsetKey,
+          key: decoratorOffsetKey,
+        },
+        node.decoratorProps,
+      ),
+    );
   }
   return children;
 };
@@ -121,10 +117,7 @@ const byDepth = (blocks) => {
  */
 const renderGroup = (group, blockRenderers, rendered, params, options) => {
   const {
-    prevType: type,
-    prevDepth: depth,
-    prevKeys: keys,
-    prevData: data,
+    prevType: type, prevDepth: depth, prevKeys: keys, prevData: data,
   } = params;
   // in case current group is empty it should not be rendered
   if (group.length === 0) {
@@ -145,12 +138,18 @@ const renderGroup = (group, blockRenderers, rendered, params, options) => {
   rendered.push(group);
 };
 
-
 /**
  * Renders blocks grouped by type using provided blockStyleRenderers
  */
-const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
-                      entityRenderers = {}, stylesRenderer, entityMap = {}, userOptions = {}) => {
+const renderBlocks = (
+  blocks,
+  inlineRenderers = {},
+  blockRenderers = {},
+  entityRenderers = {},
+  stylesRenderer,
+  entityMap = {},
+  userOptions = {},
+) => {
   // initialize
   const options = Object.assign({}, defaultOptions, userOptions);
   const rendered = [];
@@ -177,7 +176,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
       stylesRenderer,
       entityMap,
       options,
-      getKeyGenerator()
+      getKeyGenerator(),
     );
     // if type of the block has changed or the split flag is set
     // render and clear group
@@ -186,8 +185,10 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
         group,
         blockRenderers,
         rendered,
-        { prevType, prevDepth, prevKeys, prevData },
-        options
+        {
+          prevType, prevDepth, prevKeys, prevData,
+        },
+        options,
       );
       // reset group vars
       // IDEA: might be worth to group those into an instance and just newup a new one
@@ -198,8 +199,15 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
     }
     // handle children
     if (block.children) {
-      const children = renderBlocks(block.children, inlineRenderers,
-      blockRenderers, entityRenderers, stylesRenderer, entityMap, options);
+      const children = renderBlocks(
+        block.children,
+        inlineRenderers,
+        blockRenderers,
+        entityRenderers,
+        stylesRenderer,
+        entityMap,
+        options,
+      );
       renderedNode.push(children);
     }
     // push current node to group
@@ -216,12 +224,13 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
     group,
     blockRenderers,
     rendered,
-    { prevType, prevDepth, prevKeys, prevData },
-    options
+    {
+      prevType, prevDepth, prevKeys, prevData,
+    },
+    options,
   );
   return checkJoin(rendered, options);
 };
-
 
 /**
  * Converts and renders each block of Draft.js rawState
@@ -243,9 +252,7 @@ export const render = (raw, renderers = {}, options = {}) => {
     decorators,
   } = renderers;
   // If decorators are present, they are maped with the blocks array
-  const blocksWithDecorators = decorators
-    ? withDecorators(raw, decorators, options)
-    : raw.blocks;
+  const blocksWithDecorators = decorators ? withDecorators(raw, decorators, options) : raw.blocks;
   // Nest blocks by depth
   const blocks = byDepth(blocksWithDecorators);
   return renderBlocks(
@@ -255,6 +262,6 @@ export const render = (raw, renderers = {}, options = {}) => {
     entityRenderers,
     stylesRenderer,
     raw.entityMap,
-    options
+    options,
   );
 };

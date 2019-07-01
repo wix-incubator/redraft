@@ -1,7 +1,6 @@
 import arraysEqual from './helpers/arrayEqual';
 
 class ContentNode {
-
   constructor(props) {
     this.content = props.content || [];
     this.start = typeof props.start !== 'undefined' ? props.start : null;
@@ -64,7 +63,6 @@ class ContentNode {
     }
     return this;
   }
-
 }
 
 export default ContentNode;
