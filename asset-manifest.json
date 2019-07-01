@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/redraft/static/css/main.ccb796d5.chunk.css",
+    "main.js": "/redraft/static/js/main.9eb9cfee.chunk.js",
+    "main.js.map": "/redraft/static/js/main.9eb9cfee.chunk.js.map",
+    "runtime~main.js": "/redraft/static/js/runtime~main.75704451.js",
+    "runtime~main.js.map": "/redraft/static/js/runtime~main.75704451.js.map",
+    "static/css/2.ef824610.chunk.css": "/redraft/static/css/2.ef824610.chunk.css",
+    "static/js/2.8a5bcc48.chunk.js": "/redraft/static/js/2.8a5bcc48.chunk.js",
+    "static/js/2.8a5bcc48.chunk.js.map": "/redraft/static/js/2.8a5bcc48.chunk.js.map",
+    "index.html": "/redraft/index.html",
+    "precache-manifest.f3c84d73f37fd84fb3f4f3166296880a.js": "/redraft/precache-manifest.f3c84d73f37fd84fb3f4f3166296880a.js",
+    "service-worker.js": "/redraft/service-worker.js",
+    "static/css/2.ef824610.chunk.css.map": "/redraft/static/css/2.ef824610.chunk.css.map",
+    "static/css/main.ccb796d5.chunk.css.map": "/redraft/static/css/main.ccb796d5.chunk.css.map"
+  }
+}
