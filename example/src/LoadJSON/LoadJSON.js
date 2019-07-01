@@ -1,11 +1,11 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import './LoadJSON.css';
 
 class LoadJSON extends React.Component {
-
   static propTypes = {
     handleLoad: PropTypes.func.isRequired,
-  }
+  };
 
   componentDidMount() {
     this.textarea.addEventListener('paste', this.handlePaste);
@@ -20,14 +20,23 @@ class LoadJSON extends React.Component {
       const clipboardData = e.clipboardData || window.clipboardData;
       const pastedData = clipboardData.getData('text/plain');
       const raw = JSON.parse(pastedData);
-      this.props.handleLoad(raw);
+      const { handleLoad } = this.props;
+      handleLoad(raw);
     } catch (ex) {
       e.target.value = 'something went wrong'; // eslint-disable-line no-param-reassign
     }
-  }
+  };
 
   render() {
-    return <textarea className="LoadJSON" ref={(c) => { this.textarea = c; }} placeholder="Paste raw here" />;
+    return (
+      <textarea
+        className="LoadJSON"
+        ref={(c) => {
+          this.textarea = c;
+        }}
+        placeholder="Paste raw here"
+      />
+    );
   }
 }
 

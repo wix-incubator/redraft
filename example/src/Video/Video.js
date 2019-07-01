@@ -1,4 +1,6 @@
-import React, { PropTypes } from 'react';
+/* eslint-disable jsx-a11y/media-has-caption */
+import React from 'react';
+import PropTypes from 'prop-types';
 import withHover from '../withHover';
 
 import './Video.css';
@@ -19,15 +21,16 @@ const figStyles = {
   },
 };
 
-
-const Video = ({ src, caption, display, onMouseEnter, onMouseLeave, isHovered }) => (
+const Video = ({
+  src, caption, display, onMouseEnter, onMouseLeave, isHovered,
+}) => (
   <figure
     className={!isHovered ? 'Video-wrap' : 'Video-wrap hovered'}
     style={figStyles[display]}
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
   >
-    { isHovered && caption && <span className="Video-caption" >{caption}</span>}
+    {isHovered && caption && <span className="Video-caption">{caption}</span>}
     <video className="Video" src={src} controls style={imgStyles[display]} />
   </figure>
 );
@@ -39,6 +42,11 @@ Video.propTypes = {
   onMouseEnter: PropTypes.func.isRequired,
   onMouseLeave: PropTypes.func.isRequired,
   isHovered: PropTypes.bool,
+};
+
+Video.defaultProps = {
+  caption: '',
+  isHovered: false,
 };
 
 export default withHover(Video);

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import withHover from '../withHover';
 
 import './Image.css';
@@ -25,17 +26,18 @@ const figStyles = {
   },
 };
 
-
-const Image = ({ src, caption, display, onMouseEnter, onMouseLeave, isHovered, rightsHolder }) => (
+const Image = ({
+  src, caption, display, onMouseEnter, onMouseLeave, isHovered, rightsHolder,
+}) => (
   <figure
     className={!isHovered ? 'Image-wrap' : 'Image-wrap hovered'}
     style={figStyles[display]}
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
   >
-    { isHovered && caption && <span className="Image-caption" >{caption}</span>}
+    {isHovered && caption && <span className="Image-caption">{caption}</span>}
     <img className="Image" src={src} alt={caption} style={imgStyles[display]} />
-    {rightsHolder && <span className="Image-rights">Image by: {rightsHolder}</span>}
+    {rightsHolder && <span className="Image-rights">{`Image by: ${rightsHolder}`}</span>}
   </figure>
 );
 
@@ -47,6 +49,12 @@ Image.propTypes = {
   onMouseLeave: PropTypes.func.isRequired,
   isHovered: PropTypes.bool,
   rightsHolder: PropTypes.string,
+};
+
+Image.defaultProps = {
+  caption: null,
+  isHovered: false,
+  rightsHolder: null,
 };
 
 export default withHover(Image);

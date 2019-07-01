@@ -9,18 +9,14 @@ import sample from '../sample';
 import './App.css';
 import '../../node_modules/megadraft/dist/css/megadraft.css';
 
-class App extends Component {
+const intialState = editorStateFromRaw(sample);
 
-  constructor(props) {
-    super(props);
-    // HACK: when using the
-    const editorState = editorStateFromRaw(sample);
-    const raw = convertToRaw(editorState.getCurrentContent());
-    this.state = {
-      editorState,
-      raw,
-    };
-  }
+class App extends Component {
+  state = {
+    editorState: intialState,
+    raw: convertToRaw(intialState.getCurrentContent()),
+    paste: false,
+  };
 
   handleUpdate = (editorState) => {
     this.setState({
@@ -28,15 +24,17 @@ class App extends Component {
       raw: convertToRaw(editorState.getCurrentContent()),
       paste: false,
     });
-  }
+  };
 
   handleLog = () => {
-    console.log(this.state.raw); // eslint-disable-line no-console
-  }
+    const { raw } = this.state;
+    console.log(raw); // eslint-disable-line no-console
+  };
 
   handleLogJSON = () => {
-    console.log(JSON.stringify(this.state.raw)); // eslint-disable-line no-console
-  }
+    const { raw } = this.state;
+    console.log(JSON.stringify(raw)); // eslint-disable-line no-console
+  };
 
   handleLoad = (raw) => {
     this.setState({
@@ -44,23 +42,24 @@ class App extends Component {
       raw,
       paste: false,
     });
-  }
+  };
 
   handleSample = () => {
     this.setState({
-      editorState: EditorState.createWithContent(convertFromRaw(sample)),
-      raw: sample,
+      editorState: intialState,
+      raw: convertToRaw(intialState.getCurrentContent()),
       paste: false,
     });
-  }
+  };
 
   togglePaste = () => {
-    this.setState({
-      paste: !this.state.paste,
-    });
-  }
+    this.setState(state => ({
+      paste: !state.paste,
+    }));
+  };
 
   render() {
+    const { raw, editorState, paste } = this.state;
     return (
       <div className="App">
         <ForkRibbon />
@@ -70,19 +69,21 @@ class App extends Component {
         {/* <p className="App-intro">IDEA: consider some basic instructions</p> */}
         <div className="App-column">
           <div className="App-label">live preview</div>
-          <Preview raw={this.state.raw} />
+          <Preview raw={raw} />
         </div>
         <div className="App-column">
           <div className="App-label">editor</div>
-          <MegadraftEditor editorState={this.state.editorState} onChange={this.handleUpdate} />
+          <MegadraftEditor editorState={editorState} onChange={this.handleUpdate} />
           <Button label="Log raw state" handleClick={this.handleLog} />
           <Button label="Log raw JSON" handleClick={this.handleLogJSON} />
           <Button label="Paste raw JSON" handleClick={this.togglePaste} />
           <Button label="Reload sample data" handleClick={this.handleSample} />
-          {this.state.paste && <LoadJSON handleLoad={this.handleLoad} />}
+          {paste && <LoadJSON handleLoad={this.handleLoad} />}
         </div>
         <footer className="App-footer">
-          The editor in this example is powered by awesome <a href="https://github.com/globocom/megadraft">megadraft</a>
+          The editor in this example is powered by awesome
+          {' '}
+          <a href="https://github.com/globocom/megadraft">megadraft</a>
         </footer>
       </div>
     );

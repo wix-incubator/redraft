@@ -1,11 +1,13 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import './Button.css';
 
 const Button = ({ label, handleClick }) => (
-  <button className="Button" onClick={handleClick} >{label}</button>
+  <button className="Button" type="button" onClick={handleClick}>
+    {label}
+  </button>
 );
-
 
 Button.propTypes = {
   label: PropTypes.string.isRequired,

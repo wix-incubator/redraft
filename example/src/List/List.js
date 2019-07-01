@@ -1,9 +1,10 @@
-import React, { PropTypes } from 'react';
-import ReactTransitionGroup from 'react-addons-css-transition-group';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { CSSTransitionGroup } from 'react-transition-group';
 import './List.css';
 
 const List = ({ ordered, children }) => (
-  <ReactTransitionGroup
+  <CSSTransitionGroup
     component={ordered ? 'ol' : 'ul'}
     className="List"
     transitionName="animatedList"
@@ -11,11 +12,15 @@ const List = ({ ordered, children }) => (
     transitionLeaveTimeout={1000}
   >
     {children}
-  </ReactTransitionGroup>
+  </CSSTransitionGroup>
 );
 List.propTypes = {
   ordered: PropTypes.bool,
   children: PropTypes.node.isRequired,
+};
+
+List.defaultProps = {
+  ordered: false,
 };
 
 export default List;
