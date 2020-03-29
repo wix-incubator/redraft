@@ -1,14 +1,14 @@
-notifications:
-  email: false
-
 language: node_js
 cache:
+  npm: true
   directories:
   - node_modules
-
 node_js:
-- '6'
-- '5'
-
-install: 'npm install && npm run compile'
-script: 'npm run test'
+- '12'
+branches:
+  only:
+    - master
+install: npm install
+script:
+  - npm run build || travis_terminate 1;
+  - npm run release || travis_terminate 1;
