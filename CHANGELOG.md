@@ -1,3 +1,6 @@
+## 1.1.1
+- add block data to nodes #2
+
 ## 0.9.1
 - switch from Decorator option to custom decorators in renderer array #33
 
