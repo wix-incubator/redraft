@@ -1,3 +1,7 @@
+
+## 1.1.2
+- Content Style Not Being Applied Correctly [#3](https://github.com/wix-incubator/redraft/pull/3)
+
 ## 1.1.1
 - add block data to nodes #2
 
