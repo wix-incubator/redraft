@@ -55,8 +55,9 @@ export const renderNode = (
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
-    if (entity && entityRenderers[entity.type]) {
-      return entityRenderers[entity.type](
+    const entityRenderer = entity && (entityRenderers[entity.type] || entityRenderers.fallbackRenderer)
+    if (entityRenderer) {
+      return entityRenderer(
         checkJoin(children, options),
         entity.data,
         { key: node.entity, block: node.block },
