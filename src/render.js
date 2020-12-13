@@ -61,6 +61,7 @@ export const renderNode = (
         checkJoin(children, options),
         entity.data,
         { key: node.entity, block: node.block },
+        entity.type
       );
     }
   }
