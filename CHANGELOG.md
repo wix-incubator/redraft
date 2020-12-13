@@ -1,3 +1,6 @@
+## 1.1.4
+- pass entityType to entityRenderer
+
 ## 1.1.3
 - add entity fallback renderer
 - add github action release script
