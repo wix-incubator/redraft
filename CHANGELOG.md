@@ -1,3 +1,6 @@
+## 1.1.3
+- add entity fallback renderer
+- add github action release script
 
 ## 1.1.2
 - Content Style Not Being Applied Correctly [#3](https://github.com/wix-incubator/redraft/pull/3)

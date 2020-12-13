@@ -94,8 +94,8 @@ function publishPackage(pkg) {
 
 function run() {
   let skip;
-  const { FORCE_PUBLISH, TRAVIS_BRANCH, CI } = process.env;
-  if ((!TRAVIS_BRANCH || !TRAVIS_BRANCH.startsWith('master')) && !FORCE_PUBLISH) {
+  const { FORCE_PUBLISH, GITHUB_REF, CI } = process.env;
+  if ((!GITHUB_REF || GITHUB_REF.indexOf('release') === -1) && !FORCE_PUBLISH) {
     skip = 'Not on master branch';
   } else if (!CI) {
     skip = 'Not in CI';
