@@ -1,3 +1,6 @@
+## 1.1.5
+- expose createBlockRenderer
+
 ## 1.1.4
 - pass entityType to entityRenderer
 
