@@ -1,3 +1,6 @@
+## 1.1.6
+- add atomic fallback renderer
+
 ## 1.1.5
 - expose createBlockRenderer
 
