@@ -8,7 +8,7 @@ import defaultOptions from './defaultOptions';
 import withDecorators from './withDecorators';
 
 const KEY_DELIMITER = '.';
-
+const ATOMIC_BLOCK_TYPE = 'atomic';
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
@@ -55,7 +55,7 @@ export const renderNode = (
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
-    const entityRenderer = entity && (entityRenderers[entity.type] || entityRenderers.fallbackRenderer)
+    const entityRenderer = entity && (entityRenderers[entity.type] || (node.block.type === ATOMIC_BLOCK_TYPE && entityRenderers.atomicFallbackRenderer))
     if (entityRenderer) {
       return entityRenderer(
         checkJoin(children, options),
