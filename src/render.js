@@ -55,7 +55,7 @@ export const renderNode = (
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
-    const entityRenderer = entity && (entityRenderers[entity.type] || entityRenderers.fallbackRenderer || (node.block.type === ATOMIC_BLOCK_TYPE && entityRenderers.atomicFallbackRenderer))
+    const entityRenderer = entity && (entityRenderers[entity.type] || (node.block.type === ATOMIC_BLOCK_TYPE && entityRenderers.atomicFallbackRenderer))
     if (entityRenderer) {
       return entityRenderer(
         checkJoin(children, options),

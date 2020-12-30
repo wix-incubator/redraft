@@ -1,5 +1,5 @@
 ## 1.1.6
-- add atomic fallback renderer
+- add atomic fallback renderer, remove fallbackRenderer
 
 ## 1.1.5
 - expose createBlockRenderer
